@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Solicitud</title>
+    <!-- Tailwind CSS CDN for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Inter font for a modern and clean look */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f6; /* Soft background */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top vertically */
+            min-height: 100vh; /* Ensure it takes full viewport height */
+            padding: 2rem 1rem; /* General spacing */
+            box-sizing: border-box;
+        }
+
+        /* Main form container */
+        .form-container {
+            background-color: #ffffff; /* White background for the form */
+            padding: 2rem;
+            border-radius: 1rem; /* Rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* Soft shadow */
+            max-width: 500px; /* Max width for the form */
+            width: 100%; /* Take full available width up to max-width */
+        }
+
+        /* Styles for form groups (label + input) */
+        .form-group {
+            margin-bottom: 1.25rem; /* Space between form groups */
+        }
+
+        .form-group label {
+            display: block; /* Label takes its own line */
+            font-weight: 600; /* Bolder label text */
+            color: #333; /* Dark color for label */
+            margin-bottom: 0.5rem; /* Space between label and field */
+            font-size: 0.95rem; /* Slightly smaller font size */
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="tel"],
+        .form-group textarea {
+            width: 100%; /* Take full width of container */
+            padding: 0.75rem 1rem; /* Inner padding */
+            border: 1px solid #e2e8f0; /* Subtle border */
+            border-radius: 0.5rem; /* Slightly rounded borders */
+            font-size: 1rem;
+            color: #4a5568;
+            outline: none; /* Remove outline on focus */
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth transition */
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #6366f1; /* Purple border on focus */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); /* Soft shadow on focus */
+        }
+
+        /* Styles for request type checkboxes (Patrocinio/Compra) */
+        .checkbox-group {
+            display: flex;
+            gap: 1.5rem; /* Space between checkboxes */
+            margin-top: 1.5rem;
+            margin-bottom: 2rem;
+            justify-content: center; /* Center the checkboxes */
+        }
+
+        .checkbox-group div label { /* Now the label contains the input and text */
+            position: relative;
+            padding-left: 1.75rem; /* Space for custom checkbox */
+            cursor: pointer;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 0;
+            display: inline-flex;
+            align-items: center;
+            min-height: 1.25rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            /* Visually hide the native input but keep it functional */
+            position: absolute;
+            opacity: 0;
+            width: 1.25rem; /* Maintain size for click area */
+            height: 1.25rem;
+            margin: 0;
+            z-index: 1; /* Ensure it's clickable */
+            cursor: pointer;
+        }
+
+        /* Style for the custom checkbox box (using ::before on the label) */
+        .checkbox-group label .custom-checkbox-visual {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #a0aec0; /* Gray border */
+            border-radius: 0.35rem; /* Slightly rounded borders */
+            background-color: #fff;
+            transition: background-color 0.2s, border-color 0.2s;
+            pointer-events: none; /* Allow clicks to pass through to the input */
+        }
+
+        /* Style when checkbox is checked */
+        .checkbox-group input[type="checkbox"]:checked + .custom-checkbox-visual {
+            background-color: #6366f1; /* Purple background */
+            border-color: #6366f1; /* Purple border */
+        }
+        .checkbox-group input[type="checkbox"]:checked + .custom-checkbox-visual::after {
+            content: '✔';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        /* Action buttons */
+        .action-button {
+            display: block; /* Takes full width */
+            width: 100%;
+            padding: 0.85rem 1.5rem;
+            background-color: #6366f1; /* Primary purple */
+            color: white;
+            border: none;
+            border-radius: 0.6rem; /* Rounded borders */
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.25); /* Shadow for the button */
+            margin-top: 1.5rem;
+        }
+
+        .action-button:hover {
+            background-color: #4f46e5; /* Darker purple on hover */
+            transform: translateY(-2px); /* "Lift" effect */
+        }
+
+        .action-button:active {
+            transform: translateY(0); /* Return to original position on click */
+            box-shadow: 0 2px 5px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Styles for products section */
+        #productosSection {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            background-color: #fcfcfc;
+        }
+
+        #productosSection h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1.25rem;
+            text-align: center;
+        }
+
+        /* Product card style */
+        .product-card {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e0;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .product-card.selected {
+            border-color: #6366f1; /* Purple border when selected */
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15); /* More pronounced shadow */
+            transform: translateY(-3px); /* Slight lift */
+        }
+
+        .product-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #2d3748;
+        }
+
+        /* Hide native product input */
+        .product-card-header input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 1.25rem;
+            height: 1.25rem;
+            margin: 0;
+            z-index: 1; /* Ensure it's clickable */
+            cursor: pointer;
+        }
+
+        /* Style for the visual span of the product checkbox (now within a label for iOS) */
+        .product-card-header label.product-checkbox-label {
+            display: inline-block; /* Or inline-flex if internal alignment is needed */
+            position: relative; /* For positioning the input inside */
+            width: 1.25rem; /* Size of the visual clickable area */
+            height: 1.25rem;
+            margin-left: 0.75rem;
+            cursor: pointer;
+        }
+
+        .product-card-header label.product-checkbox-label::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #a0aec0;
+            border-radius: 0.35rem;
+            background-color: #fff;
+            transition: background-color 0.2s, border-color 0.2s;
+            pointer-events: none; /* Allow clicks to pass through to the input */
+        }
+
+        .product-card-header input[type="checkbox"]:checked + label.product-checkbox-label::before {
+            background-color: #6366f1;
+            border-color: #6366f1;
+        }
+
+        .product-card-header input[type="checkbox"]:checked + label.product-checkbox-label::after {
+            content: '✔';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .product-card-body {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem; /* Space between select and quantity */
+        }
+
+        .product-card-body select,
+        .product-card-body input[type="number"] {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            color: #4a5568;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .product-card-body select:focus,
+        .product-card-body input[type="number"]:focus {
+            border-color: #6366f1;
+        }
+
+        .product-card-body select {
+            flex-grow: 1; /* Allow select to take more space */
+        }
+        .product-card-body input[type="number"] {
+            width: 5rem; /* Fixed width for quantity input */
+            text-align: center;
+        }
+
+        /* Style for product total (now general summary) */
+        .summary-display { /* Changed from .total-display to .summary-display for clarity */
+            text-align: right;
+            margin-top: 1.5rem;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1f2937;
+            padding-top: 1rem;
+            border-top: 1px dashed #e2e8f0; /* Divider line */
+        }
+
+        /* Cost guide message */
+        .message-box {
+            background-color: #eff6ff; /* Light blue */
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            margin-top: 2rem;
+            text-align: center;
+            font-weight: 500;
+            display: none; /* Hidden by default, will be shown with JS */
+        }
+
+        /* Styles for message modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden; /* Hidden by default */
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+        }
+
+        .modal-content p {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-content button {
+            background-color: #6366f1;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-content button:hover {
+            background-color: #4f46e5;
+        }
+
+        /* Class to hide elements */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2 class="text-3xl font-extrabold text-gray-800 text-center mb-6">Completa tu Solicitud</h2>
+
+        <form id="solicitudForm">
+            <!-- Personal and Contact Information Section -->
+            <div class="form-group">
+                <label for="nombre">Nombre Completo:</label>
+                <input type="text" id="nombre" name="nombre" class="rounded-lg" required>
+            </div>
+            <div class="form-group">
+                <label for="celular">Número de Celular (México - 10 dígitos):</label>
+                <!-- Adapted for Mexico: 10 numeric digits pattern -->
+                <input type="tel" id="celular" name="celular" pattern="[0-9]{10}" placeholder="Ej: 5512345678" class="rounded-lg" required>
+                <p class="text-sm text-gray-500 mt-1">Formato: 10 dígitos sin espacios ni guiones.</p>
+            </div>
+            <div class="form-group">
+                <label for="direccion">Dirección (Calle y Número):</label>
+                <input type="text" id="direccion" name="direccion" class="rounded-lg" required>
+            </div>
+            <div class="form-group">
+                <label for="colonia">Colonia:</label>
+                <input type="text" id="colonia" name="colonia" class="rounded-lg" required>
+            </div>
+            <div class="form-group">
+                <label for="ciudad">Ciudad:</label>
+                <input type="text" id="ciudad" name="ciudad" class="rounded-lg" required>
+            </div>
+            <div class="form-group">
+                <label for="estado">Estado:</label>
+                <input type="text" id="estado" name="estado" class="rounded-lg" required>
+            </div>
+            <div class="form-group">
+                <label for="cp">Código Postal:</label>
+                <!-- Pattern for 5 numeric digits for Mexican CP -->
+                <input type="text" id="cp" name="cp" pattern="[0-9]{5}" placeholder="Ej: 12345" class="rounded-lg" required>
+            </div>
+            <div class="form-group">
+                <label for="referencias">Referencias Adicionales (Ej. entre calles, color de casa):</label>
+                <textarea id="referencias" name="referencias" rows="3" class="rounded-lg" required></textarea>
+            </div>
+
+            <!-- Request Type Section - Now with Checkboxes -->
+            <div class="checkbox-group">
+                <div>
+                    <label for="patrocinio">
+                        <input type="checkbox" id="patrocinio" name="tipo_patrocinio" value="Patrocinio">
+                        <span class="custom-checkbox-visual"></span> Patrocinio
+                    </label>
+                </div>
+                <div>
+                    <label for="compra">
+                        <input type="checkbox" id="compra" name="tipo_compra_productos" value="Compra de Productos">
+                        <span class="custom-checkbox-visual"></span> Compra de Productos
+                    </label>
+                </div>
+            </div>
+
+            <!-- Products Section (Initially hidden) -->
+            <div id="productosSection" class="hidden">
+                <h3>Productos Disponibles:</h3>
+                <div id="productosContainer">
+                    <!-- Product 1: Whey Protein 17oz -->
+                    <div class="product-card" data-product-id="whey17">
+                        <div class="product-card-header">
+                            <span>Whey Protein 17oz - $450 MXN</span>
+                            <label for="checkbox-whey17" class="product-checkbox-label">
+                                <input type="checkbox" id="checkbox-whey17" class="product-checkbox">
+                                <span class="custom-checkbox-visual"></span>
+                            </label>
+                        </div>
+                        <div class="product-card-body hidden">
+                            <label for="saborWhey17" class="sr-only">Sabor:</label>
+                            <select id="saborWhey17" class="rounded-lg">
+                                <option value="">Selecciona un sabor</option>
+                                <option value="almendra">Almendra</option>
+                                <option value="chocolate">Chocolate</option>
+                                <option value="mazapan">Mazapán</option>
+                                <option value="nuez">Nuez</option>
+                                <option value="platano">Plátano</option>
+                            </select>
+                            <label for="qtyWhey17" class="sr-only">Cantidad:</label>
+                            <input type="number" id="qtyWhey17" class="product-qty rounded-lg" value="1" min="1">
+                        </div>
+                    </div>
+
+                    <!-- Product 2: Whey Protein 4Lb -->
+                    <div class="product-card" data-product-id="whey4lb">
+                        <div class="product-card-header">
+                            <span>Whey Protein 4Lb - $820 MXN</span>
+                            <label for="checkbox-whey4lb" class="product-checkbox-label">
+                                <input type="checkbox" id="checkbox-whey4lb" class="product-checkbox">
+                                <span class="custom-checkbox-visual"></span>
+                            </label>
+                        </div>
+                        <div class="product-card-body hidden">
+                            <label for="saborWhey4lb" class="sr-only">Sabor:</label>
+                            <select id="saborWhey4lb" class="rounded-lg">
+                                <option value="">Selecciona un sabor</option>
+                                <option value="almendra">Almendra</option>
+                                <option value="chocolate">Chocolate</option>
+                                <option value="mazapan">Mazapán</option>
+                                <option value="nuez">Nuez</option>
+                                <option value="platano">Plátano</option>
+                            </select>
+                            <label for="qtyWhey4lb" class="sr-only">Cantidad:</label>
+                            <input type="number" id="qtyWhey4lb" class="product-qty rounded-lg" value="1" min="1">
+                        </div>
+                    </div>
+
+                    <!-- Product 3: Creatina Natural 300g -->
+                    <div class="product-card" data-product-id="creatina">
+                        <div class="product-card-header">
+                            <span>Creatina Natural 300g - $450 MXN</span>
+                            <label for="checkbox-creatina" class="product-checkbox-label">
+                                <input type="checkbox" id="checkbox-creatina" class="product-checkbox">
+                                <span class="custom-checkbox-visual"></span>
+                            </label>
+                        </div>
+                        <div class="product-card-body hidden">
+                            <label for="qtyCreatina" class="sr-only">Cantidad:</label>
+                            <input type="number" id="qtyCreatina" class="product-qty rounded-lg" value="1" min="1">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Cost Summary (Visible for Patrocinio and Compra) -->
+            <div id="summaryDisplay" class="summary-display hidden">
+                <p><span id="labelSubtotalProductos">Subtotal de productos: </span>$<span id="totalProductosValue">0.00</span> MXN</p>
+                <p><span id="labelCostoEnvio">Costo de guía de envío: </span>$<span id="costoGuiaEnvioValue">290.00</span> MXN</p>
+                <p class="text-sm text-gray-500 mt-1" id="infoGuiaEnvio">Si el costo de la guía es diferente, se cotejará con una captura de pantalla.</p>
+                <p class="font-extrabold text-lg mt-2"><span id="labelTotalGeneral">Total general: </span>$<span id="totalGeneralValue">0.00</span> MXN</p>
+            </div>
+
+            <!-- Cost Guide Message (Initially hidden) -->
+            <div id="guiaCostoMessage" class="message-box hidden">
+                <p>¡Perfecto! Ahora calcularemos tu costo de guía de envío.</p>
+                <p class="text-sm mt-1" id="messageBoxInfo">El costo fijo de la guía es de $290 MXN. Si es diferente, se cotejará con una captura de pantalla.</p>
+            </div>
+
+            <!-- Send Button (Initially hidden) -->
+            <button type="submit" id="enviarBtn" class="action-button hidden">Enviar Solicitud por WhatsApp</button>
+        </form>
+    </div>
+
+    <!-- Modal for alert messages -->
+    <div id="messageModalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <p id="messageModalText"></p>
+            <button id="messageModalCloseBtn">Entendido</button>
+        </div>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const form = document.getElementById('solicitudForm');
+        const patrocinioCheckbox = document.getElementById('patrocinio');
+        const compraCheckbox = document.getElementById('compra');
+        const productosSection = document.getElementById('productosSection');
+
+        // References to cost summary elements
+        const summaryDisplay = document.getElementById('summaryDisplay');
+        const labelSubtotalProductos = document.getElementById('labelSubtotalProductos');
+        const totalProductosValue = document.getElementById('totalProductosValue');
+        const labelCostoEnvio = document.getElementById('labelCostoEnvio');
+        const costoGuiaEnvioValue = document.getElementById('costoGuiaEnvioValue');
+        const infoGuiaEnvio = document.getElementById('infoGuiaEnvio');
+        const labelTotalGeneral = document.getElementById('labelTotalGeneral');
+        const totalGeneralValue = document.getElementById('totalGeneralValue');
+
+        const guiaCostoMessage = document.getElementById('guiaCostoMessage');
+        const messageBoxInfo = document.getElementById('messageBoxInfo');
+        const enviarBtn = document.getElementById('enviarBtn');
+
+        const messageModalOverlay = document.getElementById('messageModalOverlay');
+        const messageModalText = document.getElementById('messageModalText');
+        const messageModalCloseBtn = document.getElementById('messageModalCloseBtn');
+
+        // Fixed shipping guide cost
+        const COSTO_GUIA_ENVIO = 290.00;
+
+        // References to products and their elements
+        const productCards = document.querySelectorAll('.product-card');
+        const productData = {
+            'whey17': { name: 'Whey Protein 17oz', price: 450, hasFlavor: true },
+            'whey4lb': { name: 'Whey Protein 4Lb', price: 820, hasFlavor: true },
+            'creatina': { name: 'Creatina Natural 300g', price: 450, hasFlavor: false }
+        };
+
+        // Function to show a modal message
+        function showMessage(message) {
+            messageModalText.textContent = message;
+            messageModalOverlay.classList.add('show');
+        }
+
+        // Event listener to close the modal
+        messageModalCloseBtn.addEventListener('click', () => {
+            messageModalOverlay.classList.remove('show');
+        });
+
+        // Function to update product total and card state
+        function updateTotalAndCardState() {
+            let subtotalProductos = 0;
+            productCards.forEach(card => {
+                const checkbox = card.querySelector('.product-checkbox');
+                const productId = card.dataset.productId;
+                const productInfo = productData[productId];
+                const saborSelect = card.querySelector('select');
+                const qtyInput = card.querySelector('.product-qty');
+                const productBody = card.querySelector('.product-card-body');
+
+                if (checkbox.checked) {
+                    const quantity = parseInt(qtyInput.value, 10);
+                    if (!isNaN(quantity) && quantity > 0) {
+                        subtotalProductos += productInfo.price * quantity;
+                    }
+                    card.classList.add('selected');
+                    if (productBody) {
+                        productBody.classList.remove('hidden');
+                        qtyInput.required = true;
+                        if (productInfo.hasFlavor && saborSelect) {
+                            saborSelect.required = true;
+                        }
+                    }
+                } else {
+                    card.classList.remove('selected');
+                    if (productBody) {
+                        productBody.classList.add('hidden');
+                        qtyInput.required = false;
+                        qtyInput.value = "1";
+                        if (productInfo.hasFlavor && saborSelect) {
+                            saborSelect.required = false;
+                            saborSelect.value = "";
+                        }
+                    }
+                }
+            });
+
+            totalProductosValue.textContent = subtotalProductos.toFixed(2);
+            costoGuiaEnvioValue.textContent = COSTO_GUIA_ENVIO.toFixed(2);
+
+            let totalGeneralCalculated = 0;
+
+            const isPatrocinioSelected = patrocinioCheckbox.checked;
+            const isCompraSelected = compraCheckbox.checked;
+
+            // --- Logic to update labels and totals in the UI ---
+            if (isCompraSelected) {
+                labelSubtotalProductos.classList.remove('hidden');
+                labelSubtotalProductos.textContent = 'Subtotal de productos: ';
+                totalProductosValue.classList.remove('hidden'); // Ensure subtotal value is visible
+                labelCostoEnvio.textContent = 'Costo de guía de envío: ';
+                infoGuiaEnvio.textContent = 'Si el costo de la guía es diferente, se cotejará con una captura de pantalla.';
+                infoGuiaEnvio.classList.remove('hidden');
+                totalGeneralCalculated = subtotalProductos + COSTO_GUIA_ENVIO;
+                labelTotalGeneral.textContent = 'Total general: ';
+                messageBoxInfo.textContent = 'El costo fijo de la guía es de $290 MXN. Si es diferente, se cotejará con una captura de pantalla.';
+            } else if (isPatrocinioSelected) {
+                labelSubtotalProductos.classList.add('hidden'); // Hide subtotal line
+                totalProductosValue.classList.add('hidden'); // Also hide subtotal value
+                labelCostoEnvio.textContent = 'Costo de envío: '; // Specific text for Patrocinio
+                infoGuiaEnvio.textContent = 'Si el costo es superior o inferior serás informado.'; // Specific message
+                infoGuiaEnvio.classList.remove('hidden'); // Ensure it's visible
+                totalGeneralCalculated = COSTO_GUIA_ENVIO;
+                labelTotalGeneral.textContent = 'Total: '; // Specific text for Patrocinio total
+                messageBoxInfo.textContent = 'El costo de envío es de $290 MXN. Si el costo es superior o inferior serás informado.';
+            } else {
+                // If no option is selected, hide all relevant labels and reset
+                labelSubtotalProductos.classList.add('hidden');
+                totalProductosValue.classList.add('hidden');
+                labelCostoEnvio.textContent = 'Costo de guía de envío: '; // Default label
+                infoGuiaEnvio.classList.add('hidden'); // Hide information
+                totalGeneralCalculated = 0;
+                labelTotalGeneral.textContent = 'Total general: '; // Default label
+                messageBoxInfo.textContent = 'El costo fijo de la guía es de $290 MXN. Si es diferente, se cotejará con una captura de pantalla.'; // Default message
+            }
+
+            totalGeneralValue.textContent = totalGeneralCalculated.toFixed(2);
+        }
+
+        // Function to check the state of request checkboxes and adjust visibility
+        function checkFormState() {
+            const isPatrocinioSelected = patrocinioCheckbox.checked;
+            const isCompraSelected = compraCheckbox.checked;
+
+            // Show/hide products section
+            if (isCompraSelected) {
+                productosSection.classList.remove('hidden');
+            } else {
+                productosSection.classList.add('hidden');
+                // Deselect and reset products if the section is hidden
+                productCards.forEach(card => {
+                    const checkbox = card.querySelector('.product-checkbox');
+                    checkbox.checked = false;
+                    const productBody = card.querySelector('.product-card-body');
+                    if (productBody) {
+                        productBody.classList.add('hidden');
+                        const saborSelect = card.querySelector('select');
+                        if (saborSelect) {
+                            saborSelect.required = false;
+                            saborSelect.value = "";
+                        }
+                        const qtyInput = card.querySelector('.product-qty');
+                        if (qtyInput) {
+                            qtyInput.required = false;
+                            qtyInput.value = "1";
+                        }
+                    }
+                    card.classList.remove('selected');
+                });
+            }
+
+            // Show/hide cost summary, guide message, and send button
+            if (isPatrocinioSelected || isCompraSelected) {
+                summaryDisplay.classList.remove('hidden'); // Show cost summary
+                guiaCostoMessage.classList.remove('hidden');
+                enviarBtn.classList.remove('hidden');
+            } else {
+                summaryDisplay.classList.add('hidden'); // Hide cost summary
+                guiaCostoMessage.classList.add('hidden');
+                enviarBtn.classList.add('hidden');
+            }
+
+            updateTotalAndCardState(); // Update total and texts when state changes
+        }
+
+        // Event Listeners for each product checkbox and quantity input
+        productCards.forEach(card => {
+            const checkbox = card.querySelector('.product-checkbox');
+            const qtyInput = card.querySelector('.product-qty');
+            const saborSelect = card.querySelector('select');
+
+            // Listen for changes on the checkbox to update the card state and total
+            checkbox.addEventListener('change', updateTotalAndCardState);
+            // Listen for input changes on quantity field to update total
+            if (qtyInput) {
+                qtyInput.addEventListener('input', updateTotalAndCardState);
+            }
+            // Listen for changes on flavor select to update total (if applicable)
+            if (saborSelect) {
+                saborSelect.addEventListener('change', updateTotalAndCardState);
+            }
+        });
+
+        // Event Listeners for Patrocinio and Compra checkboxes
+        patrocinioCheckbox.addEventListener('change', checkFormState);
+        compraCheckbox.addEventListener('change', checkFormState);
+
+
+        // Form submission handler
+        form.addEventListener('submit', (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            // Collect all form data
+            const nombre = document.getElementById('nombre').value;
+            const celular = document.getElementById('celular').value;
+            const direccion = document.getElementById('direccion').value;
+            const colonia = document.getElementById('colonia').value;
+            const ciudad = document.getElementById('ciudad').value;
+            const estado = document.getElementById('estado').value;
+            const cp = document.getElementById('cp').value;
+            const referencias = document.getElementById('referencias').value;
+
+            const isPatrocinioSelected = patrocinioCheckbox.checked;
+            const isCompraSelected = compraCheckbox.checked;
+
+            // Validate that at least one request option is selected before sending
+            if (!isPatrocinioSelected && !isCompraSelected) {
+                showMessage('Por favor, selecciona al menos una opción de solicitud (Patrocinio o Compra de Productos).');
+                return; // Stop form submission
+            }
+
+            // Basic client-side validation for required fields
+            const requiredInputs = form.querySelectorAll('[required]');
+            for (let i = 0; i < requiredInputs.length; i++) {
+                if (!requiredInputs[i].value) {
+                    showMessage(`Por favor, completa el campo "${requiredInputs[i].previousElementSibling.textContent.replace(':', '')}".`);
+                    requiredInputs[i].focus();
+                    return;
+                }
+            }
+             // Specific validation for product selections if 'Compra' is checked
+            if (isCompraSelected) {
+                const selectedProducts = Array.from(productCards).filter(card => card.querySelector('.product-checkbox').checked);
+                if (selectedProducts.length === 0 && !isPatrocinioSelected) { // Only show this if no products and not patronage
+                    showMessage('Por favor, selecciona al menos un producto para la compra o la opción de Patrocinio.');
+                    return;
+                }
+
+                // Validate selected product flavors/quantities
+                for (const card of selectedProducts) {
+                    const productId = card.dataset.productId;
+                    const productInfo = productData[productId];
+                    const saborSelect = card.querySelector('select');
+                    const qtyInput = card.querySelector('.product-qty');
+
+                    if (productInfo.hasFlavor && saborSelect && !saborSelect.value) {
+                        showMessage(`Por favor, selecciona un sabor para ${productInfo.name}.`);
+                        saborSelect.focus();
+                        return;
+                    }
+                    if (qtyInput && (isNaN(parseInt(qtyInput.value, 10)) || parseInt(qtyInput.value, 10) <= 0)) {
+                        showMessage(`Por favor, ingresa una cantidad válida para ${productInfo.name}.`);
+                        qtyInput.focus();
+                        return;
+                    }
+                }
+            }
+
+
+            let mensajeWhatsApp = `¡Hola! Tengo una nueva solicitud.\n\n`;
+            mensajeWhatsApp += `*Datos del Solicitante:*\n`;
+            mensajeWhatsApp += `Nombre: ${nombre}\n`;
+            mensajeWhatsApp += `Celular: ${celular}\n`;
+            mensajeWhatsApp += `Dirección: ${direccion}\n`;
+            mensajeWhatsApp += `Colonia: ${colonia}\n`;
+            mensajeWhatsApp += `Ciudad: ${ciudad}\n`;
+            mensajeWhatsApp += `Estado: ${estado}\n`;
+            mensajeWhatsApp += `Código Postal: ${cp}\n`;
+            mensajeWhatsApp += `Referencias: ${referencias}\n\n`;
+
+            // Build request type in the message
+            let tipoSolicitudTexto = '';
+            if (isPatrocinioSelected && isCompraSelected) {
+                tipoSolicitudTexto = 'Patrocinio y Compra de Productos';
+            } else if (isPatrocinioSelected) {
+                tipoSolicitudTexto = 'Patrocinio';
+            } else if (isCompraSelected) {
+                tipoSolicitudTexto = 'Compra de Productos';
+            }
+            mensajeWhatsApp += `*Tipo de Solicitud:* ${tipoSolicitudTexto}\n`;
+
+            let subtotalProductos = 0;
+            if (isCompraSelected) {
+                let productosTexto = '';
+                let productsSelectedForPurchase = false; // Flag to check if any product is actually selected for purchase
+                productCards.forEach(card => {
+                    const checkbox = card.querySelector('.product-checkbox');
+                    if (checkbox.checked) {
+                        productsSelectedForPurchase = true; // Set flag if product is selected
+                        const productId = card.dataset.productId;
+                        const productInfo = productData[productId];
+                        const quantity = parseInt(card.querySelector('.product-qty').value, 10);
+
+                        let itemDescription = productInfo.name;
+
+                        if (productInfo.hasFlavor) {
+                            const saborSelect = card.querySelector('select');
+                            const selectedSabor = saborSelect ? saborSelect.value : '';
+                            if (selectedSabor) {
+                                itemDescription += ` (Sabor: ${selectedSabor})`;
+                            }
+                        }
+
+                        productosTexto += `- ${itemDescription} (x${quantity}): $${(productInfo.price * quantity).toFixed(2)} MXN\n`;
+                        subtotalProductos += productInfo.price * quantity;
+                    }
+                });
+
+                if (productosTexto === '') {
+                    // Only if isCompraSelected is true but no products selected, add this specific message
+                    mensajeWhatsApp += `*No se seleccionaron productos específicos para la compra.*\n\n`;
+                } else {
+                    mensajeWhatsApp += `*Detalle de Productos:*\n${productosTexto}\n`;
+                    mensajeWhatsApp += `*Subtotal de Productos:* $${subtotalProductos.toFixed(2)} MXN\n`;
+                }
+
+
+                // Add shipping cost only if products are selected for purchase OR if it's a combined request
+                if (productsSelectedForPurchase || (isPatrocinioSelected && isCompraSelected)) {
+                    mensajeWhatsApp += `*Costo de Guía de Envío:* $${COSTO_GUIA_ENVIO.toFixed(2)} MXN\n`;
+                    mensajeWhatsApp += `_(Si el costo de la guía es diferente, se cotejará con una captura de pantalla.)_\n`;
+                    mensajeWhatsApp += `*Total General:* $${(subtotalProductos + COSTO_GUIA_ENVIO).toFixed(2)} MXN\n\n`;
+                } else if (isCompraSelected && subtotalProductos === 0) { // If only "Compra" is selected but no products
+                    mensajeWhatsApp += `*Total General:* $${subtotalProductos.toFixed(2)} MXN\n\n`;
+                }
+
+            }
+            
+            if (isPatrocinioSelected && !isCompraSelected) { // Only if Patrocinio without Product Purchase
+                 mensajeWhatsApp += `*Costo de Envío:* $${COSTO_GUIA_ENVIO.toFixed(2)} MXN\n`; // Updated label for WhatsApp
+                 mensajeWhatsApp += `*Total:* $${COSTO_GUIA_ENVIO.toFixed(2)} MXN\n`; // Updated label for WhatsApp
+                 mensajeWhatsApp += `_(Si el costo es superior o inferior serás informado.)_\n\n`; // Updated message for WhatsApp
+            } else if (isPatrocinioSelected && isCompraSelected && subtotalProductos === 0) { // Combined, but no products selected, still show patronage cost
+                mensajeWhatsApp += `*Total:* $${COSTO_GUIA_ENVIO.toFixed(2)} MXN (correspondiente al patrocinio)\n\n`;
+            }
+
+
+            // Encode the message for WhatsApp URL
+            const encodedMessage = encodeURIComponent(mensajeWhatsApp);
+            // The specified WhatsApp number: 55 7236 5913 (format with country code 52)
+            const whatsappNumber = '525572365913';
+            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+
+            // Open WhatsApp in a new window/tab
+            window.open(whatsappURL, '_blank');
+        });
+
+        // Initialize state on page load
+        window.onload = () => {
+             // Remove the 'required' attribute from request checkboxes on page load
+             patrocinioCheckbox.removeAttribute('required');
+             compraCheckbox.removeAttribute('required');
+
+             checkFormState(); // Call to ensure initial state is correct
+        };
+    </script>
+</body>
+</html>
