@@ -3,871 +3,882 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Solicitud</title>
-    <!-- Tailwind CSS CDN for modern styling -->
+    <title>Power Labz</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Inter font for a modern and clean look */
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f7f6; /* Soft background */
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Align to top vertically */
-            min-height: 100vh; /* Ensure it takes full viewport height */
-            padding: 2rem 1rem; /* General spacing */
-            box-sizing: border-box;
-        }
-
-        /* Main form container */
-        .form-container {
-            background-color: #ffffff; /* White background for the form */
-            padding: 2rem;
-            border-radius: 1rem; /* Rounded corners */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* Soft shadow */
-            max-width: 500px; /* Max width for the form */
-            width: 100%; /* Take full available width up to max-width */
-        }
-
-        /* Styles for form groups (label + input) */
-        .form-group {
-            margin-bottom: 1.25rem; /* Space between form groups */
-        }
-
-        .form-group label {
-            display: block; /* Label takes its own line */
-            font-weight: 600; /* Bolder label text */
-            color: #333; /* Dark color for label */
-            margin-bottom: 0.5rem; /* Space between label and field */
-            font-size: 0.95rem; /* Slightly smaller font size */
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="tel"],
-        .form-group textarea {
-            width: 100%; /* Take full width of container */
-            padding: 0.75rem 1rem; /* Inner padding */
-            border: 1px solid #e2e8f0; /* Subtle border */
-            border-radius: 0.5rem; /* Slightly rounded borders */
-            font-size: 1rem;
-            color: #4a5568;
-            outline: none; /* Remove outline on focus */
-            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth transition */
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            border-color: #6366f1; /* Purple border on focus */
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); /* Soft shadow on focus */
-        }
-
-        /* Styles for request type checkboxes (Patrocinio/Compra) */
-        .checkbox-group {
-            display: flex;
-            gap: 1.5rem; /* Space between checkboxes */
-            margin-top: 1.5rem;
-            margin-bottom: 2rem;
-            justify-content: center; /* Center the checkboxes */
-        }
-
-        .checkbox-group div label { /* Now the label contains the input and text */
-            position: relative;
-            padding-left: 1.75rem; /* Space for custom checkbox */
-            cursor: pointer;
-            font-weight: 500;
-            color: #4a5568;
-            margin-bottom: 0;
-            display: inline-flex;
             align-items: center;
-            min-height: 1.25rem;
+            min-height: 100vh;
+            text-align: center;
+            padding: 2rem;
         }
 
-        .checkbox-group input[type="checkbox"] {
-            /* Visually hide the native input but keep it functional */
-            position: absolute;
+        /* Contenedores de todas las secciones, ahora con la misma configuración */
+        .main-container, .form-container {
+            max-width: 700px;
+            width: 100%;
+            padding: 2rem;
             opacity: 0;
-            width: 1.25rem; /* Maintain size for click area */
-            height: 1.25rem;
-            margin: 0;
-            z-index: 1; /* Ensure it's clickable */
-            cursor: pointer;
-        }
-
-        /* Style for the custom checkbox box (using ::before on the label) */
-        .checkbox-group label .custom-checkbox-visual {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 1.25rem;
-            height: 1.25rem;
-            border: 2px solid #a0aec0; /* Gray border */
-            border-radius: 0.35rem; /* Slightly rounded borders */
-            background-color: #fff;
-            transition: background-color 0.2s, border-color 0.2s;
-            pointer-events: none; /* Allow clicks to pass through to the input */
-        }
-
-        /* Style when checkbox is checked */
-        .checkbox-group input[type="checkbox"]:checked + .custom-checkbox-visual {
-            background-color: #6366f1; /* Purple background */
-            border-color: #6366f1; /* Purple border */
-        }
-        .checkbox-group input[type="checkbox"]:checked + .custom-checkbox-visual::after {
-            content: '✔';
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: white;
-            font-size: 0.8rem;
+            text-align: left;
+            /* Permite el scroll solo en los contenedores de formulario/tienda si son demasiado largos */
+            max-height: 90vh;
+            overflow-y: auto;
         }
-
-        /* Action buttons */
-        .action-button {
-            display: block; /* Takes full width */
-            width: 100%;
-            padding: 0.85rem 1.5rem;
-            background-color: #6366f1; /* Primary purple */
-            color: white;
-            border: none;
-            border-radius: 0.6rem; /* Rounded borders */
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
-            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.25); /* Shadow for the button */
-            margin-top: 1.5rem;
-        }
-
-        .action-button:hover {
-            background-color: #4f46e5; /* Darker purple on hover */
-            transform: translateY(-2px); /* "Lift" effect */
-        }
-
-        .action-button:active {
-            transform: translateY(0); /* Return to original position on click */
-            box-shadow: 0 2px 5px rgba(99, 102, 241, 0.2);
-        }
-
-        /* Styles for products section */
-        #productosSection {
-            border: 1px solid #e2e8f0;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-            background-color: #fcfcfc;
-        }
-
-        #productosSection h3 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 1.25rem;
+        
+        /* La sección principal es un caso especial y el texto está centrado */
+        .main-container {
             text-align: center;
         }
 
-        /* Product card style */
-        .product-card {
-            background-color: #ffffff;
-            border: 1px solid #cbd5e0;
-            border-radius: 0.75rem;
-            padding: 1rem;
+        .active-section {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .cipher-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            display: block;
+            text-shadow: 0 0 2px #ccc, 0 0 4px #ccc, 0 0 6px #ccc;
+        }
+
+        .options-text {
+            font-size: 1.5rem;
+            margin-top: 1rem;
+            font-weight: 400;
+            display: block;
+            opacity: 0;
+            transition: opacity 0.7s ease-in-out;
+        }
+
+        .leap-text {
+            font-size: 1.25rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+            opacity: 0.8;
+            font-weight: 300;
+            display: block;
+            opacity: 0;
+            transition: opacity 0.7s ease-in-out;
+        }
+
+        .buttons-container {
+            margin-top: 2rem;
+        }
+
+        .btn {
+            background-color: #ff8c00;
+            border: 2px solid #ff8c00;
+            color: #fff;
+            font-weight: bold;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-transform: uppercase;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
+            margin: 0 0.5rem;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #e67e00;
+            border-color: #e67e00;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.6);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
             margin-bottom: 1rem;
+            background-color: #111;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 0.5rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #ff8c00;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        .shipping-cost {
+            font-size: 1.25rem;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 1rem;
+            color: #ff8c00;
+        }
+        
+        .product-section-title {
+            text-align: center;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .product-list {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
-
-        .product-card.selected {
-            border-color: #6366f1; /* Purple border when selected */
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15); /* More pronounced shadow */
-            transform: translateY(-3px); /* Slight lift */
-        }
-
-        .product-card-header {
+        
+        .product-item {
+            background: none;
+            border: 2px solid transparent;
+            border-radius: 0.5rem;
+            padding: 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: #2d3748;
-        }
-
-        /* Hide native product input */
-        .product-card-header input[type="checkbox"] {
-            position: absolute;
-            opacity: 0;
-            width: 1.25rem;
-            height: 1.25rem;
-            margin: 0;
-            z-index: 1; /* Ensure it's clickable */
             cursor: pointer;
+            transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
         }
 
-        /* Style for the visual span of the product checkbox (now within a label for iOS) */
-        .product-card-header label.product-checkbox-label {
-            display: inline-block; /* Or inline-flex if internal alignment is needed */
-            position: relative; /* For positioning the input inside */
-            width: 1.25rem; /* Size of the visual clickable area */
-            height: 1.25rem;
-            margin-left: 0.75rem;
-            cursor: pointer;
+        .product-item:hover {
+            background-color: #111;
+            border-color: #ff8c00;
+        }
+        
+        .product-item.selected {
+            background-color: #111;
+            border-color: #ff8c00;
+            box-shadow: 0 0 10px #ff8c00;
         }
 
-        .product-card-header label.product-checkbox-label::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 1.25rem;
-            height: 1.25rem;
-            border: 2px solid #a0aec0;
-            border-radius: 0.35rem;
-            background-color: #fff;
-            transition: background-color 0.2s, border-color 0.2s;
-            pointer-events: none; /* Allow clicks to pass through to the input */
-        }
 
-        .product-card-header input[type="checkbox"]:checked + label.product-checkbox-label::before {
-            background-color: #6366f1;
-            border-color: #6366f1;
-        }
-
-        .product-card-header input[type="checkbox"]:checked + label.product-checkbox-label::after {
-            content: '✔';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 0.8rem;
-        }
-
-        .product-card-body {
+        .product-info {
             display: flex;
             align-items: center;
-            gap: 0.75rem; /* Space between select and quantity */
+            gap: 1rem;
+        }
+        
+        .product-icon {
+            font-size: 2rem;
+        }
+        
+        .product-details {
+            text-align: left;
         }
 
-        .product-card-body select,
-        .product-card-body input[type="number"] {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.5rem;
-            font-size: 0.9rem;
-            color: #4a5568;
-            outline: none;
-            transition: border-color 0.2s;
+        .product-title {
+            font-size: 1.25rem;
+            font-weight: 600;
         }
-
-        .product-card-body select:focus,
-        .product-card-body input[type="number"]:focus {
-            border-color: #6366f1;
+        
+        .product-price {
+            color: #ff8c00;
         }
-
-        .product-card-body select {
-            flex-grow: 1; /* Allow select to take more space */
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .product-card-body input[type="number"] {
-            width: 5rem; /* Fixed width for quantity input */
-            text-align: center;
-        }
-
-        /* Style for product total (now general summary) */
-        .summary-display { /* Changed from .total-display to .summary-display for clarity */
-            text-align: right;
-            margin-top: 1.5rem;
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #1f2937;
-            padding-top: 1rem;
-            border-top: 1px dashed #e2e8f0; /* Divider line */
-        }
-
-        /* Cost guide message */
-        .message-box {
-            background-color: #eff6ff; /* Light blue */
-            border: 1px solid #bfdbfe;
-            color: #1e40af;
-            padding: 1rem 1.5rem;
-            border-radius: 0.75rem;
-            margin-top: 2rem;
-            text-align: center;
-            font-weight: 500;
-            display: none; /* Hidden by default, will be shown with JS */
-        }
-
-        /* Styles for message modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+        
+        .quantity-btn {
+            background-color: #333;
+            border: 1px solid #555;
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            visibility: hidden; /* Hidden by default */
-            opacity: 0;
-            transition: visibility 0s, opacity 0.3s ease;
-        }
-
-        .modal-overlay.show {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .modal-content {
-            background-color: #fff;
-            padding: 2rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 350px;
-            width: 90%;
-        }
-
-        .modal-content p {
-            font-size: 1.1rem;
-            color: #333;
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-content button {
-            background-color: #6366f1;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 0.5rem;
+            font-size: 1.2rem;
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
+            user-select: none;
         }
 
-        .modal-content button:hover {
-            background-color: #4f46e5;
+        .quantity-btn:hover {
+            background-color: #ff8c00;
+            border-color: #ff8c00;
         }
 
-        /* Class to hide elements */
-        .hidden {
-            display: none;
+        .quantity-display {
+            width: 40px;
+            text-align: center;
+        }
+
+        .remove-btn {
+            font-size: 1.5rem;
+            color: #fff;
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+            margin-left: 1rem;
+        }
+
+        .remove-btn:hover {
+            color: #ff8c00;
+        }
+
+
+        .summary-container {
+            margin-top: 2rem;
+            text-align: left;
+            padding: 1rem;
+            border-top: 1px solid #333;
+        }
+        
+        .summary-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-total {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 1rem;
+            text-align: right;
+            color: #ff8c00;
+        }
+        
+        .message-box {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #22c55e;
+            color: #fff;
+            padding: 1rem 2rem;
+            border-radius: 9999px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            z-index: 1000;
         }
     </style>
 </head>
 <body>
-    <div class="form-container">
-        <h2 class="text-3xl font-extrabold text-gray-800 text-center mb-6">Completa tu Solicitud</h2>
 
-        <form id="solicitudForm">
-            <!-- Personal and Contact Information Section -->
-            <div class="form-group">
-                <label for="nombre">Nombre Completo:</label>
-                <input type="text" id="nombre" name="nombre" class="rounded-lg" required>
-            </div>
-            <div class="form-group">
-                <label for="celular">Número de Celular (México - 10 dígitos):</label>
-                <!-- Adapted for Mexico: 10 numeric digits pattern -->
-                <input type="tel" id="celular" name="celular" pattern="[0-9]{10}" placeholder="Ej: 5512345678" class="rounded-lg" required>
-                <p class="text-sm text-gray-500 mt-1">Formato: 10 dígitos sin espacios ni guiones.</p>
-            </div>
-            <div class="form-group">
-                <label for="direccion">Dirección (Calle y Número):</label>
-                <input type="text" id="direccion" name="direccion" class="rounded-lg" required>
-            </div>
-            <div class="form-group">
-                <label for="colonia">Colonia:</label>
-                <input type="text" id="colonia" name="colonia" class="rounded-lg" required>
-            </div>
-            <div class="form-group">
-                <label for="ciudad">Ciudad:</label>
-                <input type="text" id="ciudad" name="ciudad" class="rounded-lg" required>
-            </div>
-            <div class="form-group">
-                <label for="estado">Estado:</label>
-                <input type="text" id="estado" name="estado" class="rounded-lg" required>
-            </div>
-            <div class="form-group">
-                <label for="cp">Código Postal:</label>
-                <!-- Pattern for 5 numeric digits for Mexican CP -->
-                <input type="text" id="cp" name="cp" pattern="[0-9]{5}" placeholder="Ej: 12345" class="rounded-lg" required>
-            </div>
-            <div class="form-group">
-                <label for="referencias">Referencias Adicionales (Ej. entre calles, color de casa):</label>
-                <textarea id="referencias" name="referencias" rows="3" class="rounded-lg" required></textarea>
-            </div>
-
-            <!-- Request Type Section - Now with Checkboxes -->
-            <div class="checkbox-group">
-                <div>
-                    <label for="patrocinio">
-                        <input type="checkbox" id="patrocinio" name="tipo_patrocinio" value="Patrocinio">
-                        <span class="custom-checkbox-visual"></span> Patrocinio
-                    </label>
-                </div>
-                <div>
-                    <label for="compra">
-                        <input type="checkbox" id="compra" name="tipo_compra_productos" value="Compra de Productos">
-                        <span class="custom-checkbox-visual"></span> Compra de Productos
-                    </label>
-                </div>
-            </div>
-
-            <!-- Products Section (Initially hidden) -->
-            <div id="productosSection" class="hidden">
-                <h3>Productos Disponibles:</h3>
-                <div id="productosContainer">
-                    <!-- Product 1: Whey Protein 17oz -->
-                    <div class="product-card" data-product-id="whey17">
-                        <div class="product-card-header">
-                            <span>Whey Protein 17oz - $450 MXN</span>
-                            <label for="checkbox-whey17" class="product-checkbox-label">
-                                <input type="checkbox" id="checkbox-whey17" class="product-checkbox">
-                                <span class="custom-checkbox-visual"></span>
-                            </label>
-                        </div>
-                        <div class="product-card-body hidden">
-                            <label for="saborWhey17" class="sr-only">Sabor:</label>
-                            <select id="saborWhey17" class="rounded-lg">
-                                <option value="">Selecciona un sabor</option>
-                                <option value="almendra">Almendra</option>
-                                <option value="chocolate">Chocolate</option>
-                                <option value="mazapan">Mazapán</option>
-                                <option value="nuez">Nuez</option>
-                                <option value="platano">Plátano</option>
-                            </select>
-                            <label for="qtyWhey17" class="sr-only">Cantidad:</label>
-                            <input type="number" id="qtyWhey17" class="product-qty rounded-lg" value="1" min="1">
-                        </div>
-                    </div>
-
-                    <!-- Product 2: Whey Protein 4Lb -->
-                    <div class="product-card" data-product-id="whey4lb">
-                        <div class="product-card-header">
-                            <span>Whey Protein 4Lb - $820 MXN</span>
-                            <label for="checkbox-whey4lb" class="product-checkbox-label">
-                                <input type="checkbox" id="checkbox-whey4lb" class="product-checkbox">
-                                <span class="custom-checkbox-visual"></span>
-                            </label>
-                        </div>
-                        <div class="product-card-body hidden">
-                            <label for="saborWhey4lb" class="sr-only">Sabor:</label>
-                            <select id="saborWhey4lb" class="rounded-lg">
-                                <option value="">Selecciona un sabor</option>
-                                <option value="almendra">Almendra</option>
-                                <option value="chocolate">Chocolate</option>
-                                <option value="mazapan">Mazapán</option>
-                                <option value="nuez">Nuez</option>
-                                <option value="platano">Plátano</option>
-                            </select>
-                            <label for="qtyWhey4lb" class="sr-only">Cantidad:</label>
-                            <input type="number" id="qtyWhey4lb" class="product-qty rounded-lg" value="1" min="1">
-                        </div>
-                    </div>
-
-                    <!-- Product 3: Creatina Natural 300g -->
-                    <div class="product-card" data-product-id="creatina">
-                        <div class="product-card-header">
-                            <span>Creatina Natural 300g - $450 MXN</span>
-                            <label for="checkbox-creatina" class="product-checkbox-label">
-                                <input type="checkbox" id="checkbox-creatina" class="product-checkbox">
-                                <span class="custom-checkbox-visual"></span>
-                            </label>
-                        </div>
-                        <div class="product-card-body hidden">
-                            <label for="qtyCreatina" class="sr-only">Cantidad:</label>
-                            <input type="number" id="qtyCreatina" class="product-qty rounded-lg" value="1" min="1">
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Cost Summary (Visible for Patrocinio and Compra) -->
-            <div id="summaryDisplay" class="summary-display hidden">
-                <p><span id="labelSubtotalProductos">Subtotal de productos: </span>$<span id="totalProductosValue">0.00</span> MXN</p>
-                <p><span id="labelCostoEnvio">Costo de guía de envío: </span>$<span id="costoGuiaEnvioValue">290.00</span> MXN</p>
-                <p class="text-sm text-gray-500 mt-1" id="infoGuiaEnvio">Si el costo de la guía es diferente, se cotejará con una captura de pantalla.</p>
-                <p class="font-extrabold text-lg mt-2"><span id="labelTotalGeneral">Total general: </span>$<span id="totalGeneralValue">0.00</span> MXN</p>
-            </div>
-
-            <!-- Cost Guide Message (Initially hidden) -->
-            <div id="guiaCostoMessage" class="message-box hidden">
-                <p>¡Perfecto! Ahora calcularemos tu costo de guía de envío.</p>
-                <p class="text-sm mt-1" id="messageBoxInfo">El costo fijo de la guía es de $290 MXN. Si es diferente, se cotejará con una captura de pantalla.</p>
-            </div>
-
-            <!-- Send Button (Initially hidden) -->
-            <button type="submit" id="enviarBtn" class="action-button hidden">Enviar Solicitud por WhatsApp</button>
-        </form>
-    </div>
-
-    <!-- Modal for alert messages -->
-    <div id="messageModalOverlay" class="modal-overlay">
-        <div class="modal-content">
-            <p id="messageModalText"></p>
-            <button id="messageModalCloseBtn">Entendido</button>
+    <!-- Main Content -->
+    <div id="main-container" class="main-container active-section">
+        <span id="cipher-text" class="cipher-text"></span>
+        <span id="options-text" class="options-text"></span>
+        <span id="leap-text" class="leap-text"></span>
+        <div id="buttons-container" class="buttons-container hidden flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <button class="btn" id="patrocinio-btn" type="button">Patrocinio</button>
+            <button class="btn" id="tienda-btn" type="button">Comprar productos</button>
         </div>
     </div>
 
+    <!-- Patrocinio & Tienda Form Combined -->
+    <div id="patrocinio-container" class="form-container">
+        <h2 id="form-title" class="text-2xl font-bold mb-4">Formulario de Patrocinio</h2>
+        <form id="patrocinio-form">
+            <label for="nombre" class="form-label">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" class="form-input" required placeholder="Tu nombre completo">
+
+            <label for="celular" class="form-label">Número de celular:</label>
+            <input type="tel" id="celular" name="celular" class="form-input" required placeholder="Ej. 55 1234 5678">
+
+            <label for="email" class="form-label">Correo electrónico:</label>
+            <input type="email" id="email" name="email" class="form-input" required placeholder="tu-correo@ejemplo.com">
+            
+            <label for="direccion" class="form-label">Dirección:</label>
+            <input type="text" id="direccion" name="direccion" class="form-input" required placeholder="Calle, número exterior e interior">
+
+            <label for="colonia" class="form-label">Colonia:</label>
+            <input type="text" id="colonia" name="colonia" class="form-input" required placeholder="Colonia">
+
+            <label for="ciudad" class="form-label">Ciudad:</label>
+            <input type="text" id="ciudad" name="ciudad" class="form-input" required placeholder="Ciudad">
+
+            <label for="estado" class="form-label">Estado:</label>
+            <input type="text" id="estado" name="estado" class="form-input" list="estados-mexico" required placeholder="Selecciona o escribe tu estado">
+            <datalist id="estados-mexico"></datalist>
+
+            <label for="cp" class="form-label">Código Postal:</label>
+            <input type="text" id="cp" name="cp" class="form-input" required placeholder="Ej. 12345">
+
+            <label for="referencia" class="form-label">Referencia:</label>
+            <textarea id="referencia" name="referencia" class="form-input" rows="3" required placeholder="Referencia para la entrega"></textarea>
+
+            <!-- Products section moved inside the form -->
+            <div id="products-section">
+                <h3 class="product-section-title" id="products-title">Nuestros Productos</h3>
+                <div class="product-list">
+                    <div class="product-item" data-product-id="1" data-price="450" data-name="Whey Protein 17 oz">
+                        <div class="product-info">
+                            <div class="product-icon">💪</div>
+                            <div class="product-details">
+                                <div class="product-title">Whey Protein 17 oz</div>
+                                <div class="product-price">$450 MXN</div>
+                            </div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="quantity-btn minus-btn" type="button">-</button>
+                            <span class="quantity-display">0</span>
+                            <button class="quantity-btn plus-btn" type="button">+</button>
+                        </div>
+                    </div>
+                    <div class="product-item" data-product-id="2" data-price="820" data-name="Whey Protein 4 LBS">
+                        <div class="product-info">
+                            <div class="product-icon">💪</div>
+                            <div class="product-details">
+                                <div class="product-title">Whey Protein 4 LBS</div>
+                                <div class="product-price">$820 MXN</div>
+                            </div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="quantity-btn minus-btn" type="button">-</button>
+                            <span class="quantity-display">0</span>
+                            <button class="quantity-btn plus-btn" type="button">+</button>
+                        </div>
+                    </div>
+                    <div class="product-item" data-product-id="3" data-price="450" data-name="Creatina 300g">
+                        <div class="product-info">
+                            <div class="product-icon">💊</div>
+                            <div class="product-details">
+                                <div class="product-title">Creatina 300g</div>
+                                <div class="product-price">$450 MXN</div>
+                            </div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="quantity-btn minus-btn" type="button">-</button>
+                            <span class="quantity-display">0</span>
+                            <button class="quantity-btn plus-btn" type="button">+</button>
+                        </div>
+                    </div>
+                    <div class="product-item" data-product-id="4" data-price="450" data-name="BCAA 300g">
+                        <div class="product-info">
+                            <div class="product-icon">💊</div>
+                            <div class="product-details">
+                                <div class="product-title">BCAA 300g</div>
+                                <div class="product-price">$450 MXN</div>
+                            </div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="quantity-btn minus-btn" type="button">-</button>
+                            <span class="quantity-display">0</span>
+                            <button class="quantity-btn plus-btn" type="button">+</button>
+                        </div>
+                    </div>
+                    <div class="product-item" data-product-id="5" data-price="450" data-name="Prework out Zen">
+                        <div class="product-info">
+                            <div class="product-icon">⚡️</div>
+                            <div class="product-details">
+                                <div class="product-title">Prework out Zen</div>
+                                <div class="product-price">$450 MXN</div>
+                            </div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="quantity-btn minus-btn" type="button">-</button>
+                            <span class="quantity-display">0</span>
+                            <button class="quantity-btn plus-btn" type="button">+</button>
+                        </div>
+                    </div>
+                    <div class="product-item" data-product-id="6" data-price="400" data-name="Cafeína anhidra 100 caps">
+                        <div class="product-info">
+                            <div class="product-icon">☕</div>
+                            <div class="product-details">
+                                <div class="product-title">Cafeína anhidra 100 caps</div>
+                                <div class="product-price">$400 MXN</div>
+                            </div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="quantity-btn minus-btn" type="button">-</button>
+                            <span class="quantity-display">0</span>
+                            <button class="quantity-btn plus-btn" type="button">+</button>
+                        </div>
+                    </div>
+                    <div class="product-item" data-product-id="7" data-price="410" data-name="Creatina Deluxe 100 caps">
+                        <div class="product-info">
+                            <div class="product-icon">💊</div>
+                            <div class="product-details">
+                                <div class="product-title">Creatina Deluxe 100 caps</div>
+                                <div class="product-price">$410 MXN</div>
+                            </div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="quantity-btn minus-btn" type="button">-</button>
+                            <span class="quantity-display">0</span>
+                            <button class="quantity-btn plus-btn" type="button">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="summary-section">
+                <div class="summary-container">
+                    <h3 class="summary-title">Resumen de tu Pedido</h3>
+                    <div id="selected-products-list">
+                        <!-- Selected products will be dynamically added here -->
+                    </div>
+                     <div id="shipping-cost" class="summary-item hidden">
+                        <span>Costo de Envío:</span>
+                        <span id="costo-envio">--</span>
+                    </div>
+                    <div id="summary-total" class="summary-total">Total: $0 MXN</div>
+                </div>
+            </div>
+
+            <!-- Buttons moved to the bottom and styled as a row -->
+            <div class="flex flex-col sm:flex-row justify-center items-center mt-4 space-y-2 sm:space-y-0 sm:space-x-2">
+                <button class="btn" id="back-patrocinio-btn" type="button">Regresar</button>
+                <button class="btn bg-green-600 hover:bg-green-700 border-green-600 hover:border-green-700" id="send-btn">
+                    Enviar a WhatsApp
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Custom Message Box -->
+    <div id="message-box" class="message-box"></div>
+
     <script>
-        // Get DOM elements
-        const form = document.getElementById('solicitudForm');
-        const patrocinioCheckbox = document.getElementById('patrocinio');
-        const compraCheckbox = document.getElementById('compra');
-        const productosSection = document.getElementById('productosSection');
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainContainer = document.getElementById('main-container');
+            const cipherTextElem = document.getElementById('cipher-text');
+            const optionsTextElem = document.getElementById('options-text');
+            const leapTextElem = document.getElementById('leap-text');
+            const buttonsContainer = document.getElementById('buttons-container');
+            
+            const patrocinioBtn = document.getElementById('patrocinio-btn');
+            const tiendaBtn = document.getElementById('tienda-btn');
+            const patrocinioContainer = document.getElementById('patrocinio-container');
+            const formTitle = document.getElementById('form-title');
+            const patrocinioForm = document.getElementById('patrocinio-form');
+            const costoEnvioElem = document.getElementById('costo-envio');
+            const estadoInput = document.getElementById('estado');
+            const datalistEstados = document.getElementById('estados-mexico');
+            const backPatrocinioBtn = document.getElementById('back-patrocinio-btn');
+            const messageBox = document.getElementById('message-box');
+            const shippingCostContainer = document.getElementById('shipping-cost');
+            const sendBtn = document.getElementById('send-btn');
+            const productsSection = document.getElementById('products-section');
+            const summarySection = document.getElementById('summary-section');
+            const productListContainer = document.querySelector('.product-list');
+            const selectedProductsList = document.getElementById('selected-products-list');
+            const summaryTotalElem = document.getElementById('summary-total');
 
-        // References to cost summary elements
-        const summaryDisplay = document.getElementById('summaryDisplay');
-        const labelSubtotalProductos = document.getElementById('labelSubtotalProductos');
-        const totalProductosValue = document.getElementById('totalProductosValue');
-        const labelCostoEnvio = document.getElementById('labelCostoEnvio');
-        const costoGuiaEnvioValue = document.getElementById('costoGuiaEnvioValue');
-        const infoGuiaEnvio = document.getElementById('infoGuiaEnvio');
-        const labelTotalGeneral = document.getElementById('labelTotalGeneral');
-        const totalGeneralValue = document.getElementById('totalGeneralValue');
+            const fullText = "Bienvenido a Power Labz";
+            const optionsText = "selecciona las opciones";
+            const leapText = "un pequeño gran salto";
 
-        const guiaCostoMessage = document.getElementById('guiaCostoMessage');
-        const messageBoxInfo = document.getElementById('messageBoxInfo');
-        const enviarBtn = document.getElementById('enviarBtn');
+            let selectedProducts = {};
+            let isStoreMode = false;
+            
+            // Mapa con los costos de envío para estados específicos (rango de $290 a $430 pesos).
+            const shippingCosts = new Map([
+                ["Ciudad de México", 290],
+                ["Estado de México", 290],
+                ["Hidalgo", 290],
+                ["Puebla", 310],
+                ["Veracruz", 350],
+                ["Jalisco", 350],
+                ["Nuevo León", 400],
+                ["Chihuahua", 430],
+                ["Baja California", 430],
+                ["Coahuila", 350]
+            ]);
+            const defaultCost = 350;
 
-        const messageModalOverlay = document.getElementById('messageModalOverlay');
-        const messageModalText = document.getElementById('messageModalText');
-        const messageModalCloseBtn = document.getElementById('messageModalCloseBtn');
+            // Mapeo de nombres largos a nombres cortos para el cálculo de costos.
+            const stateNameMapping = new Map([
+                ["Coahuila de Zaragoza", "Coahuila"],
+                ["Ciudad de México (CDMX)", "Ciudad de México"],
+                ["México (Estado de México)", "Estado de México"],
+                ["Veracruz de Ignacio de la Llave", "Veracruz"],
+            ]);
 
-        // Fixed shipping guide cost
-        const COSTO_GUIA_ENVIO = 290.00;
-
-        // References to products and their elements
-        const productCards = document.querySelectorAll('.product-card');
-        const productData = {
-            'whey17': { name: 'Whey Protein 17oz', price: 450, hasFlavor: true },
-            'whey4lb': { name: 'Whey Protein 4Lb', price: 820, hasFlavor: true },
-            'creatina': { name: 'Creatina Natural 300g', price: 450, hasFlavor: false }
-        };
-
-        // Function to show a modal message
-        function showMessage(message) {
-            messageModalText.textContent = message;
-            messageModalOverlay.classList.add('show');
-        }
-
-        // Event listener to close the modal
-        messageModalCloseBtn.addEventListener('click', () => {
-            messageModalOverlay.classList.remove('show');
-        });
-
-        // Function to update product total and card state
-        function updateTotalAndCardState() {
-            let subtotalProductos = 0;
-            productCards.forEach(card => {
-                const checkbox = card.querySelector('.product-checkbox');
-                const productId = card.dataset.productId;
-                const productInfo = productData[productId];
-                const saborSelect = card.querySelector('select');
-                const qtyInput = card.querySelector('.product-qty');
-                const productBody = card.querySelector('.product-card-body');
-
-                if (checkbox.checked) {
-                    const quantity = parseInt(qtyInput.value, 10);
-                    if (!isNaN(quantity) && quantity > 0) {
-                        subtotalProductos += productInfo.price * quantity;
-                    }
-                    card.classList.add('selected');
-                    if (productBody) {
-                        productBody.classList.remove('hidden');
-                        qtyInput.required = true;
-                        if (productInfo.hasFlavor && saborSelect) {
-                            saborSelect.required = true;
-                        }
-                    }
-                } else {
-                    card.classList.remove('selected');
-                    if (productBody) {
-                        productBody.classList.add('hidden');
-                        qtyInput.required = false;
-                        qtyInput.value = "1";
-                        if (productInfo.hasFlavor && saborSelect) {
-                            saborSelect.required = false;
-                            saborSelect.value = "";
-                        }
-                    }
-                }
+            // Lista completa de estados de México proporcionada por el usuario
+            const estadosDeMexico = [
+                "Aguascalientes", "Baja California", "Baja California Sur", "Campeche", "Chiapas", "Chihuahua", "Ciudad de México (CDMX)", "Coahuila de Zaragoza", "Colima", "Durango", "Guanajuato", "Guerrero", "Hidalgo", "Jalisco", "México (Estado de México)", "Michoacán de Ocampo", "Morelos", "Nayarit", "Nuevo León", "Oaxaca", "Puebla", "Querétaro", "Quintana Roo", "San Luis Potosí", "Sinaloa", "Sonora", "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz de Ignacio de la Llave", "Yucatán", "Zacatecas"
+            ];
+            
+            // Popula el datalist con todos los estados
+            estadosDeMexico.forEach(estado => {
+                const option = document.createElement('option');
+                option.value = estado;
+                datalistEstados.appendChild(option);
             });
 
-            totalProductosValue.textContent = subtotalProductos.toFixed(2);
-            costoGuiaEnvioValue.textContent = COSTO_GUIA_ENVIO.toFixed(2);
+            const scramble = (text) => {
+                return text.split('').map(() => String.fromCharCode(33 + Math.floor(Math.random() * 94))).join('');
+            };
 
-            let totalGeneralCalculated = 0;
+            const decrypt = (element, text, duration, delay) => {
+                return new Promise(resolve => {
+                    let startTime = null;
+                    const scrambleInterval = 50;
 
-            const isPatrocinioSelected = patrocinioCheckbox.checked;
-            const isCompraSelected = compraCheckbox.checked;
+                    const animate = (timestamp) => {
+                        if (!startTime) startTime = timestamp;
+                        const elapsed = timestamp - startTime;
+                        const progress = Math.min(1, elapsed / duration);
+                        const charsToShow = Math.floor(progress * text.length);
 
-            // --- Logic to update labels and totals in the UI ---
-            if (isCompraSelected) {
-                labelSubtotalProductos.classList.remove('hidden');
-                labelSubtotalProductos.textContent = 'Subtotal de productos: ';
-                totalProductosValue.classList.remove('hidden'); // Ensure subtotal value is visible
-                labelCostoEnvio.textContent = 'Costo de guía de envío: ';
-                infoGuiaEnvio.textContent = 'Si el costo de la guía es diferente, se cotejará con una captura de pantalla.';
-                infoGuiaEnvio.classList.remove('hidden');
-                totalGeneralCalculated = subtotalProductos + COSTO_GUIA_ENVIO;
-                labelTotalGeneral.textContent = 'Total general: ';
-                messageBoxInfo.textContent = 'El costo fijo de la guía es de $290 MXN. Si es diferente, se cotejará con una captura de pantalla.';
-            } else if (isPatrocinioSelected) {
-                labelSubtotalProductos.classList.add('hidden'); // Hide subtotal line
-                totalProductosValue.classList.add('hidden'); // Also hide subtotal value
-                labelCostoEnvio.textContent = 'Costo de envío: '; // Specific text for Patrocinio
-                infoGuiaEnvio.textContent = 'Si el costo es superior o inferior serás informado.'; // Specific message
-                infoGuiaEnvio.classList.remove('hidden'); // Ensure it's visible
-                totalGeneralCalculated = COSTO_GUIA_ENVIO;
-                labelTotalGeneral.textContent = 'Total: '; // Specific text for Patrocinio total
-                messageBoxInfo.textContent = 'El costo de envío es de $290 MXN. Si el costo es superior o inferior serás informado.';
-            } else {
-                // If no option is selected, hide all relevant labels and reset
-                labelSubtotalProductos.classList.add('hidden');
-                totalProductosValue.classList.add('hidden');
-                labelCostoEnvio.textContent = 'Costo de guía de envío: '; // Default label
-                infoGuiaEnvio.classList.add('hidden'); // Hide information
-                totalGeneralCalculated = 0;
-                labelTotalGeneral.textContent = 'Total general: '; // Default label
-                messageBoxInfo.textContent = 'El costo fijo de la guía es de $290 MXN. Si es diferente, se cotejará con una captura de pantalla.'; // Default message
-            }
+                        const decryptedPart = text.substring(0, charsToShow);
+                        const scrambledPart = scramble(text.substring(charsToShow));
 
-            totalGeneralValue.textContent = totalGeneralCalculated.toFixed(2);
-        }
+                        element.textContent = decryptedPart + scrambledPart;
 
-        // Function to check the state of request checkboxes and adjust visibility
-        function checkFormState() {
-            const isPatrocinioSelected = patrocinioCheckbox.checked;
-            const isCompraSelected = compraCheckbox.checked;
-
-            // Show/hide products section
-            if (isCompraSelected) {
-                productosSection.classList.remove('hidden');
-            } else {
-                productosSection.classList.add('hidden');
-                // Deselect and reset products if the section is hidden
-                productCards.forEach(card => {
-                    const checkbox = card.querySelector('.product-checkbox');
-                    checkbox.checked = false;
-                    const productBody = card.querySelector('.product-card-body');
-                    if (productBody) {
-                        productBody.classList.add('hidden');
-                        const saborSelect = card.querySelector('select');
-                        if (saborSelect) {
-                            saborSelect.required = false;
-                            saborSelect.value = "";
+                        if (progress < 1) {
+                            setTimeout(() => requestAnimationFrame(animate), scrambleInterval);
+                        } else {
+                            element.textContent = text;
+                            resolve();
                         }
-                        const qtyInput = card.querySelector('.product-qty');
-                        if (qtyInput) {
-                            qtyInput.required = false;
-                            qtyInput.value = "1";
-                        }
-                    }
-                    card.classList.remove('selected');
+                    };
+
+                    setTimeout(() => requestAnimationFrame(animate), delay);
                 });
-            }
+            };
 
-            // Show/hide cost summary, guide message, and send button
-            if (isPatrocinioSelected || isCompraSelected) {
-                summaryDisplay.classList.remove('hidden'); // Show cost summary
-                guiaCostoMessage.classList.remove('hidden');
-                enviarBtn.classList.remove('hidden');
-            } else {
-                summaryDisplay.classList.add('hidden'); // Hide cost summary
-                guiaCostoMessage.classList.add('hidden');
-                enviarBtn.classList.add('hidden');
-            }
+            const startDecryptionSequence = async () => {
+                await decrypt(cipherTextElem, fullText, 1000, 500);
+                
+                setTimeout(() => {
+                    optionsTextElem.textContent = optionsText;
+                    optionsTextElem.style.opacity = '1';
+                }, 1000);
 
-            updateTotalAndCardState(); // Update total and texts when state changes
-        }
+                setTimeout(() => {
+                    leapTextElem.textContent = leapText;
+                    leapTextElem.style.opacity = '1';
+                }, 1700);
 
-        // Event Listeners for each product checkbox and quantity input
-        productCards.forEach(card => {
-            const checkbox = card.querySelector('.product-checkbox');
-            const qtyInput = card.querySelector('.product-qty');
-            const saborSelect = card.querySelector('select');
+                setTimeout(() => {
+                    buttonsContainer.classList.remove('hidden');
+                }, 2400);
+            };
 
-            // Listen for changes on the checkbox to update the card state and total
-            checkbox.addEventListener('change', updateTotalAndCardState);
-            // Listen for input changes on quantity field to update total
-            if (qtyInput) {
-                qtyInput.addEventListener('input', updateTotalAndCardState);
-            }
-            // Listen for changes on flavor select to update total (if applicable)
-            if (saborSelect) {
-                saborSelect.addEventListener('change', updateTotalAndCardState);
-            }
-        });
+            const showMessageBox = (message) => {
+                messageBox.textContent = message;
+                messageBox.style.opacity = '1';
+                setTimeout(() => {
+                    messageBox.style.opacity = '0';
+                }, 3000);
+            };
 
-        // Event Listeners for Patrocinio and Compra checkboxes
-        patrocinioCheckbox.addEventListener('change', checkFormState);
-        compraCheckbox.addEventListener('change', checkFormState);
-
-
-        // Form submission handler
-        form.addEventListener('submit', (event) => {
-            event.preventDefault(); // Prevent default form submission
-
-            // Collect all form data
-            const nombre = document.getElementById('nombre').value;
-            const celular = document.getElementById('celular').value;
-            const direccion = document.getElementById('direccion').value;
-            const colonia = document.getElementById('colonia').value;
-            const ciudad = document.getElementById('ciudad').value;
-            const estado = document.getElementById('estado').value;
-            const cp = document.getElementById('cp').value;
-            const referencias = document.getElementById('referencias').value;
-
-            const isPatrocinioSelected = patrocinioCheckbox.checked;
-            const isCompraSelected = compraCheckbox.checked;
-
-            // Validate that at least one request option is selected before sending
-            if (!isPatrocinioSelected && !isCompraSelected) {
-                showMessage('Por favor, selecciona al menos una opción de solicitud (Patrocinio o Compra de Productos).');
-                return; // Stop form submission
-            }
-
-            // Basic client-side validation for required fields
-            const requiredInputs = form.querySelectorAll('[required]');
-            for (let i = 0; i < requiredInputs.length; i++) {
-                if (!requiredInputs[i].value) {
-                    showMessage(`Por favor, completa el campo "${requiredInputs[i].previousElementSibling.textContent.replace(':', '')}".`);
-                    requiredInputs[i].focus();
-                    return;
+            const transitionToSection = (targetSection, isPatrocinio) => {
+                const currentActive = document.querySelector('.active-section');
+                if (currentActive) {
+                    currentActive.classList.remove('active-section');
                 }
-            }
-             // Specific validation for product selections if 'Compra' is checked
-            if (isCompraSelected) {
-                const selectedProducts = Array.from(productCards).filter(card => card.querySelector('.product-checkbox').checked);
-                if (selectedProducts.length === 0 && !isPatrocinioSelected) { // Only show this if no products and not patronage
-                    showMessage('Por favor, selecciona al menos un producto para la compra o la opción de Patrocinio.');
-                    return;
-                }
+                targetSection.classList.add('active-section');
 
-                // Validate selected product flavors/quantities
-                for (const card of selectedProducts) {
-                    const productId = card.dataset.productId;
-                    const productInfo = productData[productId];
-                    const saborSelect = card.querySelector('select');
-                    const qtyInput = card.querySelector('.product-qty');
-
-                    if (productInfo.hasFlavor && saborSelect && !saborSelect.value) {
-                        showMessage(`Por favor, selecciona un sabor para ${productInfo.name}.`);
-                        saborSelect.focus();
-                        return;
-                    }
-                    if (qtyInput && (isNaN(parseInt(qtyInput.value, 10)) || parseInt(qtyInput.value, 10) <= 0)) {
-                        showMessage(`Por favor, ingresa una cantidad válida para ${productInfo.name}.`);
-                        qtyInput.focus();
-                        return;
-                    }
-                }
-            }
-
-
-            let mensajeWhatsApp = `¡Hola! Tengo una nueva solicitud.\n\n`;
-            mensajeWhatsApp += `*Datos del Solicitante:*\n`;
-            mensajeWhatsApp += `Nombre: ${nombre}\n`;
-            mensajeWhatsApp += `Celular: ${celular}\n`;
-            mensajeWhatsApp += `Dirección: ${direccion}\n`;
-            mensajeWhatsApp += `Colonia: ${colonia}\n`;
-            mensajeWhatsApp += `Ciudad: ${ciudad}\n`;
-            mensajeWhatsApp += `Estado: ${estado}\n`;
-            mensajeWhatsApp += `Código Postal: ${cp}\n`;
-            mensajeWhatsApp += `Referencias: ${referencias}\n\n`;
-
-            // Build request type in the message
-            let tipoSolicitudTexto = '';
-            if (isPatrocinioSelected && isCompraSelected) {
-                tipoSolicitudTexto = 'Patrocinio y Compra de Productos';
-            } else if (isPatrocinioSelected) {
-                tipoSolicitudTexto = 'Patrocinio';
-            } else if (isCompraSelected) {
-                tipoSolicitudTexto = 'Compra de Productos';
-            }
-            mensajeWhatsApp += `*Tipo de Solicitud:* ${tipoSolicitudTexto}\n`;
-
-            let subtotalProductos = 0;
-            if (isCompraSelected) {
-                let productosTexto = '';
-                let productsSelectedForPurchase = false; // Flag to check if any product is actually selected for purchase
-                productCards.forEach(card => {
-                    const checkbox = card.querySelector('.product-checkbox');
-                    if (checkbox.checked) {
-                        productsSelectedForPurchase = true; // Set flag if product is selected
-                        const productId = card.dataset.productId;
-                        const productInfo = productData[productId];
-                        const quantity = parseInt(card.querySelector('.product-qty').value, 10);
-
-                        let itemDescription = productInfo.name;
-
-                        if (productInfo.hasFlavor) {
-                            const saborSelect = card.querySelector('select');
-                            const selectedSabor = saborSelect ? saborSelect.value : '';
-                            if (selectedSabor) {
-                                itemDescription += ` (Sabor: ${selectedSabor})`;
-                            }
-                        }
-
-                        productosTexto += `- ${itemDescription} (x${quantity}): $${(productInfo.price * quantity).toFixed(2)} MXN\n`;
-                        subtotalProductos += productInfo.price * quantity;
-                    }
-                });
-
-                if (productosTexto === '') {
-                    // Only if isCompraSelected is true but no products selected, add this specific message
-                    mensajeWhatsApp += `*No se seleccionaron productos específicos para la compra.*\n\n`;
+                if (isPatrocinio) {
+                    formTitle.textContent = "Formulario de Patrocinio";
+                    // Now, the product and summary sections are always visible, so we don't need to hide them
+                    isStoreMode = false;
+                    resetProductSelection();
                 } else {
-                    mensajeWhatsApp += `*Detalle de Productos:*\n${productosTexto}\n`;
-                    mensajeWhatsApp += `*Subtotal de Productos:* $${subtotalProductos.toFixed(2)} MXN\n`;
+                    formTitle.textContent = "Formulario de Envío y Productos";
+                    isStoreMode = true;
                 }
-
-
-                // Add shipping cost only if products are selected for purchase OR if it's a combined request
-                if (productsSelectedForPurchase || (isPatrocinioSelected && isCompraSelected)) {
-                    mensajeWhatsApp += `*Costo de Guía de Envío:* $${COSTO_GUIA_ENVIO.toFixed(2)} MXN\n`;
-                    mensajeWhatsApp += `_(Si el costo de la guía es diferente, se cotejará con una captura de pantalla.)_\n`;
-                    mensajeWhatsApp += `*Total General:* $${(subtotalProductos + COSTO_GUIA_ENVIO).toFixed(2)} MXN\n\n`;
-                } else if (isCompraSelected && subtotalProductos === 0) { // If only "Compra" is selected but no products
-                    mensajeWhatsApp += `*Total General:* $${subtotalProductos.toFixed(2)} MXN\n\n`;
-                }
-
-            }
+            };
             
-            if (isPatrocinioSelected && !isCompraSelected) { // Only if Patrocinio without Product Purchase
-                 mensajeWhatsApp += `*Costo de Envío:* $${COSTO_GUIA_ENVIO.toFixed(2)} MXN\n`; // Updated label for WhatsApp
-                 mensajeWhatsApp += `*Total:* $${COSTO_GUIA_ENVIO.toFixed(2)} MXN\n`; // Updated label for WhatsApp
-                 mensajeWhatsApp += `_(Si el costo es superior o inferior serás informado.)_\n\n`; // Updated message for WhatsApp
-            } else if (isPatrocinioSelected && isCompraSelected && subtotalProductos === 0) { // Combined, but no products selected, still show patronage cost
-                mensajeWhatsApp += `*Total:* $${COSTO_GUIA_ENVIO.toFixed(2)} MXN (correspondiente al patrocinio)\n\n`;
-            }
+            patrocinioBtn.addEventListener('click', () => {
+                transitionToSection(patrocinioContainer, true);
+            });
 
+            tiendaBtn.addEventListener('click', () => {
+                transitionToSection(patrocinioContainer, false);
+            });
 
-            // Encode the message for WhatsApp URL
-            const encodedMessage = encodeURIComponent(mensajeWhatsApp);
-            // The specified WhatsApp number: 55 7236 5913 (format with country code 52)
-            const whatsappNumber = '525572365913';
-            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+            backPatrocinioBtn.addEventListener('click', () => {
+                transitionToSection(mainContainer);
+                shippingCostContainer.classList.add('hidden');
+                costoEnvioElem.textContent = '--';
+            });
+            
+            const calculateShippingCost = (estado) => {
+                const mappedEstado = stateNameMapping.get(estado) || estado;
+                const cost = shippingCosts.get(mappedEstado) || defaultCost;
+                return cost;
+            };
 
-            // Open WhatsApp in a new window/tab
-            window.open(whatsappURL, '_blank');
+            const saveFormData = () => {
+                const formData = {
+                    nombre: document.getElementById('nombre').value,
+                    celular: document.getElementById('celular').value,
+                    email: document.getElementById('email').value,
+                    direccion: document.getElementById('direccion').value,
+                    colonia: document.getElementById('colonia').value,
+                    ciudad: document.getElementById('ciudad').value,
+                    estado: document.getElementById('estado').value,
+                    cp: document.getElementById('cp').value,
+                    referencia: document.getElementById('referencia').value,
+                };
+                localStorage.setItem('patrocinioFormData', JSON.stringify(formData));
+            };
+
+            const loadFormData = () => {
+                const savedData = localStorage.getItem('patrocinioFormData');
+                if (savedData) {
+                    const formData = JSON.parse(savedData);
+                    document.getElementById('nombre').value = formData.nombre || '';
+                    document.getElementById('celular').value = formData.celular || '';
+                    document.getElementById('email').value = formData.email || '';
+                    document.getElementById('direccion').value = formData.direccion || '';
+                    document.getElementById('colonia').value = formData.colonia || '';
+                    document.getElementById('ciudad').value = formData.ciudad || '';
+                    document.getElementById('estado').value = formData.estado || '';
+                    document.getElementById('cp').value = formData.cp || '';
+                    document.getElementById('referencia').value = formData.referencia || '';
+
+                    if (formData.estado) {
+                         const shippingCost = calculateShippingCost(formData.estado);
+                         const costText = `$${shippingCost} MXN`;
+                         shippingCostContainer.classList.remove('hidden');
+                         costoEnvioElem.textContent = costText;
+                    }
+                }
+            };
+
+            estadoInput.addEventListener('input', async (e) => {
+                updateSummary();
+            });
+
+            patrocinioForm.addEventListener('input', saveFormData);
+
+            // Se cambia el evento de submit del formulario a un evento de clic en el botón
+            // para evitar el comportamiento por defecto de submit del formulario
+            sendBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Validar que todos los campos requeridos estén llenos
+                if (!patrocinioForm.reportValidity()) {
+                    return;
+                }
+                
+                // Validación específica para la tienda: debe haber al menos un producto seleccionado
+                if (isStoreMode && Object.keys(selectedProducts).length === 0) {
+                     showMessageBox('Por favor, selecciona al menos un producto.');
+                     return;
+                }
+
+                const selectedState = estadoInput.value;
+                const isBuyingProducts = Object.keys(selectedProducts).length > 0;
+                
+                if (isBuyingProducts && !estadosDeMexico.includes(selectedState)) {
+                    showMessageBox('Por favor, selecciona un estado válido de la lista para calcular el envío.');
+                    return;
+                }
+                
+                let message = "Hola, me gustaría realizar un pedido con la siguiente información:\n\n";
+                
+                if (isStoreMode) {
+                    message += "--- Pedido de productos ---\n";
+                } else {
+                    message += "--- Solicitud de patrocinio ---\n";
+                }
+                
+                if (isBuyingProducts) {
+                    message += "Productos:\n";
+                    let totalProductos = 0;
+                    for (const id in selectedProducts) {
+                        const item = selectedProducts[id];
+                        message += `* ${item.quantity}x ${item.name} ($${item.price} c/u)\n`;
+                        totalProductos += item.quantity * item.price;
+                    }
+                    message += `Total de productos: $${totalProductos} MXN\n\n`;
+
+                    const shippingCost = calculateShippingCost(selectedState);
+                    const totalPagar = totalProductos + shippingCost;
+                    message += `Costo de Envío: $${shippingCost} MXN\n\n`;
+                    message += `TOTAL A PAGAR: $${totalPagar} MXN\n\n`;
+                } else {
+                    message += "Productos:\nSin productos seleccionados\n\n";
+                    // Asegúrate de que el costo de envío se muestre y se sume incluso sin productos
+                    if (estadosDeMexico.includes(selectedState)) {
+                        const shippingCost = calculateShippingCost(selectedState);
+                        message += `Costo de Envío: $${shippingCost} MXN\n\n`;
+                        message += `TOTAL A PAGAR: $${shippingCost} MXN\n\n`;
+                    }
+                }
+
+                message += "--- Información de Contacto y Envío ---\n";
+                message += `Nombre: ${document.getElementById('nombre').value}\n`;
+                message += `Celular: ${document.getElementById('celular').value}\n`;
+                message += `Email: ${document.getElementById('email').value}\n`;
+                message += `Dirección: ${document.getElementById('direccion').value}, Colonia: ${document.getElementById('colonia').value}\n`;
+                message += `Ciudad: ${document.getElementById('ciudad').value}, Estado: ${document.getElementById('estado').value}, C.P.: ${document.getElementById('cp').value}\n`;
+                message += `Referencia: ${document.getElementById('referencia').value}\n`;
+                
+                const phoneNumber = '5572365913';
+                const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+                
+                window.open(whatsappUrl, '_blank');
+                showMessageBox('Abriendo WhatsApp...');
+                patrocinioForm.reset();
+                selectedProducts = {};
+                updateSummary();
+                shippingCostContainer.classList.add('hidden');
+                costoEnvioElem.textContent = '--';
+                transitionToSection(mainContainer);
+                localStorage.removeItem('patrocinioFormData');
+            });
+
+            const resetProductSelection = () => {
+                selectedProducts = {};
+                document.querySelectorAll('.product-item').forEach(item => {
+                    item.classList.remove('selected');
+                    item.querySelector('.quantity-display').textContent = 0;
+                });
+                updateSummary();
+            };
+
+            const updateSummary = () => {
+                selectedProductsList.innerHTML = '';
+                let productsTotal = 0;
+                
+                // Muestra la lista de productos seleccionados y calcula el subtotal de productos
+                for (const id in selectedProducts) {
+                    const item = selectedProducts[id];
+                    if (item.quantity > 0) {
+                        const itemTotal = item.quantity * item.price;
+                        productsTotal += itemTotal;
+
+                        const summaryItem = document.createElement('div');
+                        summaryItem.className = 'summary-item';
+                        summaryItem.innerHTML = `
+                            <span>${item.name} (${item.quantity})</span>
+                            <span>$${itemTotal} MXN</span>
+                        `;
+                        selectedProductsList.appendChild(summaryItem);
+                    }
+                }
+                
+                let finalTotal = productsTotal;
+                const estado = estadoInput.value;
+                const isStateValid = estadosDeMexico.includes(estado);
+
+                // Muestra el costo de envío si el estado es válido
+                if (isStateValid) {
+                    const shippingCost = calculateShippingCost(estado);
+                    shippingCostContainer.classList.remove('hidden');
+                    costoEnvioElem.textContent = `$${shippingCost} MXN`;
+                    
+                    // Suma el costo de envío al total, sin importar si hay productos
+                    finalTotal += shippingCost;
+                } else {
+                    shippingCostContainer.classList.add('hidden');
+                }
+                
+                summaryTotalElem.textContent = `Total: $${finalTotal} MXN`;
+            };
+            
+            // Event listener for clicking on the product item itself to select/deselect
+            productListContainer.addEventListener('click', (e) => {
+                const productItem = e.target.closest('.product-item');
+                const isQuantityBtn = e.target.closest('.quantity-btn') || e.target.closest('.remove-btn');
+
+                if (productItem && !isQuantityBtn) {
+                    const productId = productItem.dataset.productId;
+                    const productName = productItem.dataset.name;
+                    const productPrice = parseInt(productItem.dataset.price);
+                    const quantityDisplay = productItem.querySelector('.quantity-display');
+
+                    if (!productItem.classList.contains('selected')) {
+                        // Select the product
+                        quantityDisplay.textContent = 1;
+                        productItem.classList.add('selected');
+                        selectedProducts[productId] = {
+                            name: productName,
+                            price: productPrice,
+                            quantity: 1
+                        };
+                        showMessageBox(`Se seleccionó ${productName}`);
+                    } else {
+                        // Deselect the product
+                        quantityDisplay.textContent = 0;
+                        productItem.classList.remove('selected');
+                        delete selectedProducts[productId];
+                        showMessageBox('Producto eliminado de la selección.');
+                    }
+                    updateSummary();
+                }
+
+                // Event listener for quantity buttons
+                if (e.target.closest('.plus-btn')) {
+                    const productItem = e.target.closest('.product-item');
+                    const productId = productItem.dataset.productId;
+                    const productName = productItem.dataset.name;
+                    const productPrice = parseInt(productItem.dataset.price);
+                    const quantityDisplay = productItem.querySelector('.quantity-display');
+
+                    let quantity = parseInt(quantityDisplay.textContent, 10);
+                    quantity++;
+                    quantityDisplay.textContent = quantity;
+                    productItem.classList.add('selected');
+
+                    selectedProducts[productId] = {
+                        name: productName,
+                        price: productPrice,
+                        quantity: quantity
+                    };
+
+                    updateSummary();
+
+                } else if (e.target.closest('.minus-btn')) {
+                    const productItem = e.target.closest('.product-item');
+                    const productId = productItem.dataset.productId;
+                    const quantityDisplay = productItem.querySelector('.quantity-display');
+
+                    let quantity = parseInt(quantityDisplay.textContent, 10);
+                    if (quantity > 0) {
+                        quantity--;
+                        quantityDisplay.textContent = quantity;
+                        
+                        if (quantity === 0) {
+                            productItem.classList.remove('selected');
+                            delete selectedProducts[productId];
+                            showMessageBox('Producto eliminado de la selección.');
+                        } else {
+                            selectedProducts[productId].quantity = quantity;
+                        }
+
+                        updateSummary();
+                    }
+                } else if (e.target.closest('.remove-btn')) {
+                    const productItem = e.target.closest('.product-item');
+                    const productId = productItem.dataset.productId;
+                    const productName = productItem.dataset.name;
+                    const quantityDisplay = productItem.querySelector('.quantity-display');
+                    
+                    quantityDisplay.textContent = 0;
+                    productItem.classList.remove('selected');
+                    delete selectedProducts[productId];
+                    updateSummary();
+                    showMessageBox(`Se eliminó "${productName}" del pedido.`);
+                }
+            });
+            
+            // Start the initial animation and load data
+            startDecryptionSequence();
+            loadFormData();
         });
-
-        // Initialize state on page load
-        window.onload = () => {
-             // Remove the 'required' attribute from request checkboxes on page load
-             patrocinioCheckbox.removeAttribute('required');
-             compraCheckbox.removeAttribute('required');
-
-             checkFormState(); // Call to ensure initial state is correct
-        };
     </script>
 </body>
 </html>
