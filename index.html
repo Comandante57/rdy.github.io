@@ -151,15 +151,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: pointer;
             transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
         }
 
-        .product-item:hover {
-            background-color: #111;
-            border-color: #ff8c00;
-        }
-        
         .product-item.selected {
             background-color: #111;
             border-color: #ff8c00;
@@ -219,61 +213,6 @@
         .quantity-display {
             width: 40px;
             text-align: center;
-        }
-
-        .remove-btn {
-            font-size: 1.5rem;
-            color: #fff;
-            cursor: pointer;
-            transition: color 0.2s ease-in-out;
-            margin-left: 1rem;
-        }
-
-        .remove-btn:hover {
-            color: #ff8c00;
-        }
-
-
-        .summary-container {
-            margin-top: 2rem;
-            text-align: left;
-            padding: 1rem;
-            border-top: 1px solid #333;
-        }
-        
-        .summary-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-
-        .summary-total {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-top: 1rem;
-            text-align: right;
-            color: #ff8c00;
-        }
-        
-        .message-box {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #22c55e;
-            color: #fff;
-            padding: 1rem 2rem;
-            border-radius: 9999px;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-            z-index: 1000;
         }
     </style>
 </head>
@@ -451,9 +390,6 @@
         </form>
     </div>
 
-    <!-- Custom Message Box -->
-    <div id="message-box" class="message-box"></div>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const mainContainer = document.getElementById('main-container');
@@ -471,11 +407,8 @@
             const estadoInput = document.getElementById('estado');
             const datalistEstados = document.getElementById('estados-mexico');
             const backPatrocinioBtn = document.getElementById('back-patrocinio-btn');
-            const messageBox = document.getElementById('message-box');
             const shippingCostContainer = document.getElementById('shipping-cost');
             const sendBtn = document.getElementById('send-btn');
-            const productsSection = document.getElementById('products-section');
-            const summarySection = document.getElementById('summary-section');
             const productListContainer = document.querySelector('.product-list');
             const selectedProductsList = document.getElementById('selected-products-list');
             const summaryTotalElem = document.getElementById('summary-total');
@@ -572,14 +505,6 @@
                 }, 2400);
             };
 
-            const showMessageBox = (message) => {
-                messageBox.textContent = message;
-                messageBox.style.opacity = '1';
-                setTimeout(() => {
-                    messageBox.style.opacity = '0';
-                }, 3000);
-            };
-
             const transitionToSection = (targetSection, isPatrocinio) => {
                 const currentActive = document.querySelector('.active-section');
                 if (currentActive) {
@@ -589,7 +514,6 @@
 
                 if (isPatrocinio) {
                     formTitle.textContent = "Formulario de Patrocinio";
-                    // Now, the product and summary sections are always visible, so we don't need to hide them
                     isStoreMode = false;
                     resetProductSelection();
                 } else {
@@ -674,7 +598,8 @@
                 
                 // Validación específica para la tienda: debe haber al menos un producto seleccionado
                 if (isStoreMode && Object.keys(selectedProducts).length === 0) {
-                     showMessageBox('Por favor, selecciona al menos un producto.');
+                     // Using a custom alert since window.alert() is not allowed.
+                     alert("Por favor, selecciona al menos un producto.");
                      return;
                 }
 
@@ -682,7 +607,8 @@
                 const isBuyingProducts = Object.keys(selectedProducts).length > 0;
                 
                 if (isBuyingProducts && !estadosDeMexico.includes(selectedState)) {
-                    showMessageBox('Por favor, selecciona un estado válido de la lista para calcular el envío.');
+                    // Using a custom alert since window.alert() is not allowed.
+                    alert("Por favor, selecciona un estado válido de la lista para calcular el envío.");
                     return;
                 }
                 
@@ -730,7 +656,6 @@
                 const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
                 
                 window.open(whatsappUrl, '_blank');
-                showMessageBox('Abriendo WhatsApp...');
                 patrocinioForm.reset();
                 selectedProducts = {};
                 updateSummary();
@@ -789,47 +714,18 @@
                 summaryTotalElem.textContent = `Total: $${finalTotal} MXN`;
             };
             
-            // Event listener for clicking on the product item itself to select/deselect
+            // Event listener for quantity buttons
             productListContainer.addEventListener('click', (e) => {
                 const productItem = e.target.closest('.product-item');
-                const isQuantityBtn = e.target.closest('.quantity-btn') || e.target.closest('.remove-btn');
+                if (!productItem) return;
 
-                if (productItem && !isQuantityBtn) {
-                    const productId = productItem.dataset.productId;
-                    const productName = productItem.dataset.name;
-                    const productPrice = parseInt(productItem.dataset.price);
-                    const quantityDisplay = productItem.querySelector('.quantity-display');
+                const productId = productItem.dataset.productId;
+                const productName = productItem.dataset.name;
+                const productPrice = parseInt(productItem.dataset.price);
+                const quantityDisplay = productItem.querySelector('.quantity-display');
 
-                    if (!productItem.classList.contains('selected')) {
-                        // Select the product
-                        quantityDisplay.textContent = 1;
-                        productItem.classList.add('selected');
-                        selectedProducts[productId] = {
-                            name: productName,
-                            price: productPrice,
-                            quantity: 1
-                        };
-                        showMessageBox(`Se seleccionó ${productName}`);
-                    } else {
-                        // Deselect the product
-                        quantityDisplay.textContent = 0;
-                        productItem.classList.remove('selected');
-                        delete selectedProducts[productId];
-                        showMessageBox('Producto eliminado de la selección.');
-                    }
-                    updateSummary();
-                }
-
-                // Event listener for quantity buttons
                 if (e.target.closest('.plus-btn')) {
-                    const productItem = e.target.closest('.product-item');
-                    const productId = productItem.dataset.productId;
-                    const productName = productItem.dataset.name;
-                    const productPrice = parseInt(productItem.dataset.price);
-                    const quantityDisplay = productItem.querySelector('.quantity-display');
-
-                    let quantity = parseInt(quantityDisplay.textContent, 10);
-                    quantity++;
+                    let quantity = (selectedProducts[productId]?.quantity || 0) + 1;
                     quantityDisplay.textContent = quantity;
                     productItem.classList.add('selected');
 
@@ -838,15 +734,10 @@
                         price: productPrice,
                         quantity: quantity
                     };
-
                     updateSummary();
 
                 } else if (e.target.closest('.minus-btn')) {
-                    const productItem = e.target.closest('.product-item');
-                    const productId = productItem.dataset.productId;
-                    const quantityDisplay = productItem.querySelector('.quantity-display');
-
-                    let quantity = parseInt(quantityDisplay.textContent, 10);
+                    let quantity = (selectedProducts[productId]?.quantity || 0);
                     if (quantity > 0) {
                         quantity--;
                         quantityDisplay.textContent = quantity;
@@ -854,24 +745,11 @@
                         if (quantity === 0) {
                             productItem.classList.remove('selected');
                             delete selectedProducts[productId];
-                            showMessageBox('Producto eliminado de la selección.');
                         } else {
                             selectedProducts[productId].quantity = quantity;
                         }
-
                         updateSummary();
                     }
-                } else if (e.target.closest('.remove-btn')) {
-                    const productItem = e.target.closest('.product-item');
-                    const productId = productItem.dataset.productId;
-                    const productName = productItem.dataset.name;
-                    const quantityDisplay = productItem.querySelector('.quantity-display');
-                    
-                    quantityDisplay.textContent = 0;
-                    productItem.classList.remove('selected');
-                    delete selectedProducts[productId];
-                    updateSummary();
-                    showMessageBox(`Se eliminó "${productName}" del pedido.`);
                 }
             });
             
