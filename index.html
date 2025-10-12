@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
             background-color: #000;
             color: #fff;
             display: flex;
@@ -18,11 +18,9 @@
             padding: 2rem;
         }
 
-        /* Contenedores de todas las secciones, ahora con la misma configuración */
         .main-container, .form-container {
             max-width: 700px;
             width: 100%;
-            padding: 2rem;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.5s ease-in-out;
@@ -31,12 +29,16 @@
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: left;
-            /* Permite el scroll solo en los contenedores de formulario/tienda si son demasiado largos */
             max-height: 90vh;
             overflow-y: auto;
         }
         
-        /* La sección principal es un caso especial y el texto está centrado */
+        .form-container {
+            padding: 2rem;
+            border-radius: 1rem;
+            background-color: #0a0a0a;
+        }
+        
         .main-container {
             text-align: center;
         }
@@ -52,16 +54,18 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
             display: block;
-            text-shadow: 0 0 2px #ccc, 0 0 4px #ccc, 0 0 6px #ccc;
+            color: #fff;
+            text-shadow: 0 0 2px #ffffff, 0 0 4px rgba(255, 255, 255, 0.5);
         }
 
-        .options-text {
+        .options-text, .leap-text {
             font-size: 1.5rem;
             margin-top: 1rem;
             font-weight: 400;
             display: block;
             opacity: 0;
             transition: opacity 0.7s ease-in-out;
+            color: #ccc;
         }
 
         .leap-text {
@@ -70,9 +74,6 @@
             font-style: italic;
             opacity: 0.8;
             font-weight: 300;
-            display: block;
-            opacity: 0;
-            transition: opacity 0.7s ease-in-out;
         }
 
         .buttons-container {
@@ -82,24 +83,25 @@
         .btn {
             background-color: #ff8c00;
             border: 2px solid #ff8c00;
-            color: #fff;
-            font-weight: bold;
+            color: #000;
+            font-weight: bold; 
             padding: 0.75rem 1.5rem;
             border-radius: 0.5rem;
             text-transform: uppercase;
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
+            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
             margin: 0 0.5rem;
             cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
         }
 
         .btn:hover {
             background-color: #e67e00;
             border-color: #e67e00;
             color: #fff;
-            box-shadow: 0 0 15px rgba(255, 140, 0, 0.6);
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.8);
         }
         
-        .form-input {
+        .form-input, .form-select {
             width: 100%;
             padding: 0.75rem;
             margin-bottom: 1rem;
@@ -107,25 +109,92 @@
             border: 1px solid #333;
             color: #fff;
             border-radius: 0.5rem;
+            appearance: none;
+            font-weight: 500; 
+        }
+        
+        .state-search-wrapper {
+            position: relative;
+            margin-bottom: 1rem;
         }
 
-        .form-input:focus {
+        .state-input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .state-input-container .form-input {
+            margin-bottom: 0;
+            padding-right: 2.5rem;
+        }
+
+        #clear-state-btn {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #ff8c00;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            line-height: 1;
+            display: none;
+        }
+        
+        .state-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 180px;
+            overflow-y: auto;
+            z-index: 10;
+            background-color: #1a1a1a;
+            border: 1px solid #ff8c00;
+            border-radius: 0 0 0.5rem 0.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+
+        .state-suggestions-item {
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+
+        .state-suggestions-item:hover,
+        .state-suggestions-item.active-suggestion {
+            background-color: #333;
+            color: #ff8c00;
+        }
+
+        .form-input:focus, .form-select:focus {
             outline: none;
             border-color: #ff8c00;
+            box-shadow: 0 0 5px rgba(255, 140, 0, 0.7);
         }
 
         .form-label {
             display: block;
             margin-bottom: 0.25rem;
-            font-weight: 500;
+            font-weight: 500; 
+            color: #ff8c00;
         }
 
         .shipping-cost {
             font-size: 1.25rem;
-            font-weight: bold;
+            font-weight: bold; 
             text-align: center;
             margin-top: 1rem;
             color: #ff8c00;
+            padding: 0.5rem;
+            background-color: #1a1a1a;
+            border-radius: 0.5rem;
         }
         
         .product-section-title {
@@ -134,32 +203,32 @@
             margin-bottom: 1rem;
             font-size: 1.5rem;
             font-weight: bold;
+            color: #fff;
         }
         
         .product-list {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
-            margin-top: 2rem;
+            gap: 1rem;
+            margin-top: 1rem;
         }
         
         .product-item {
-            background: none;
-            border: 2px solid transparent;
-            border-radius: 0.5rem;
+            background-color: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 0.75rem;
             padding: 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
         }
 
         .product-item.selected {
-            background-color: #111;
+            background-color: #221a00;
             border-color: #ff8c00;
-            box-shadow: 0 0 10px #ff8c00;
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.6);
         }
-
 
         .product-info {
             display: flex;
@@ -182,6 +251,7 @@
         
         .product-price {
             color: #ff8c00;
+            font-weight: 500;
         }
         
         .quantity-control {
@@ -194,8 +264,8 @@
             background-color: #333;
             border: 1px solid #555;
             color: #fff;
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -203,16 +273,60 @@
             font-size: 1.2rem;
             cursor: pointer;
             user-select: none;
+            transition: background-color 0.2s, border-color 0.2s;
         }
 
         .quantity-btn:hover {
             background-color: #ff8c00;
             border-color: #ff8c00;
+            color: #000;
         }
 
         .quantity-display {
             width: 40px;
             text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        
+        .summary-container {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #111;
+            border-radius: 0.75rem;
+            border: 1px solid #333;
+        }
+
+        .summary-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: #ff8c00;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #333;
+            font-size: 1rem;
+        }
+        
+        .summary-item:last-of-type {
+            border-bottom: none;
+        }
+
+        .summary-total {
+            font-size: 1.75rem;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 1rem;
+            color: #ff8c00;
+        }
+        
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
@@ -223,7 +337,7 @@
         <span id="cipher-text" class="cipher-text"></span>
         <span id="options-text" class="options-text"></span>
         <span id="leap-text" class="leap-text"></span>
-        <div id="buttons-container" class="buttons-container hidden flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+        <div id="buttons-container" class="buttons-container hidden">
             <button class="btn" id="patrocinio-btn" type="button">Patrocinio</button>
             <button class="btn" id="tienda-btn" type="button">Comprar productos</button>
         </div>
@@ -251,9 +365,25 @@
             <label for="ciudad" class="form-label">Ciudad:</label>
             <input type="text" id="ciudad" name="ciudad" class="form-input" required placeholder="Ciudad">
 
-            <label for="estado" class="form-label">Estado:</label>
-            <input type="text" id="estado" name="estado" class="form-input" list="estados-mexico" required placeholder="Selecciona o escribe tu estado">
-            <datalist id="estados-mexico"></datalist>
+            <!-- Contenedor para la búsqueda/selección de estado -->
+            <div class="state-search-wrapper">
+                <label for="estado-search" class="form-label">Estado:</label>
+                <!-- Contenedor para el input y el botón de borrado -->
+                <div class="state-input-container">
+                    <!-- Input de búsqueda/selección -->
+                    <input type="text" id="estado-search" name="estado-search" class="form-input" required placeholder="Haz clic aquí para seleccionar tu estado...">
+                    <!-- Botón para borrar la selección (la "X") -->
+                    <button type="button" id="clear-state-btn" title="Borrar selección">✕</button>
+                </div>
+                
+                <!-- Lista de sugerencias (simulando el dropdown) -->
+                <div id="state-suggestions" class="state-suggestions">
+                    <!-- Las sugerencias se poblarán aquí con JavaScript -->
+                </div>
+                
+                <!-- Input oculto para almacenar el valor final del estado (para validación/envío) -->
+                <input type="hidden" id="estado-hidden" name="estado" required>
+            </div>
 
             <label for="cp" class="form-label">Código Postal:</label>
             <input type="text" id="cp" name="cp" class="form-input" required placeholder="Ej. 12345">
@@ -263,7 +393,8 @@
 
             <!-- Products section moved inside the form -->
             <div id="products-section">
-                <h3 class="product-section-title" id="products-title">Nuestros Productos</h3>
+                <!-- Se cambió el título para que sea dinámico, pero aquí ponemos el ID para JS -->
+                <h3 class="product-section-title" id="products-title"></h3> 
                 <div class="product-list">
                     <div class="product-item" data-product-id="1" data-price="450" data-name="Whey Protein 17 oz">
                         <div class="product-info">
@@ -369,13 +500,21 @@
             <div id="summary-section">
                 <div class="summary-container">
                     <h3 class="summary-title">Resumen de tu Pedido</h3>
+                    <!-- Fila para el Subtotal de Productos -->
+                    <div id="subtotal-item" class="summary-item">
+                        <span>Subtotal de Productos:</span>
+                        <span id="subtotal-amount">$0 MXN</span>
+                    </div>
+                    
                     <div id="selected-products-list">
                         <!-- Selected products will be dynamically added here -->
                     </div>
-                     <div id="shipping-cost" class="summary-item hidden">
+                     <!-- Fila para el Costo de Envío (Ahora siempre visible si hay estado válido) -->
+                     <div id="shipping-cost-item" class="summary-item">
                         <span>Costo de Envío:</span>
                         <span id="costo-envio">--</span>
                     </div>
+                    <!-- Fila para el Total -->
                     <div id="summary-total" class="summary-total">Total: $0 MXN</div>
                 </div>
             </div>
@@ -392,6 +531,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Variables de elementos del DOM
             const mainContainer = document.getElementById('main-container');
             const cipherTextElem = document.getElementById('cipher-text');
             const optionsTextElem = document.getElementById('options-text');
@@ -402,57 +542,241 @@
             const tiendaBtn = document.getElementById('tienda-btn');
             const patrocinioContainer = document.getElementById('patrocinio-container');
             const formTitle = document.getElementById('form-title');
+            const productsTitle = document.getElementById('products-title'); // Nuevo elemento
             const patrocinioForm = document.getElementById('patrocinio-form');
             const costoEnvioElem = document.getElementById('costo-envio');
-            const estadoInput = document.getElementById('estado');
-            const datalistEstados = document.getElementById('estados-mexico');
+            const subtotalAmountElem = document.getElementById('subtotal-amount'); 
+            const shippingCostItem = document.getElementById('shipping-cost-item');
+            
+            // Elementos de búsqueda de estado actualizados
+            const estadoSearchInput = document.getElementById('estado-search');
+            const estadoSuggestions = document.getElementById('state-suggestions');
+            const estadoHiddenInput = document.getElementById('estado-hidden'); 
+            const clearStateBtn = document.getElementById('clear-state-btn'); 
+            
             const backPatrocinioBtn = document.getElementById('back-patrocinio-btn');
-            const shippingCostContainer = document.getElementById('shipping-cost');
             const sendBtn = document.getElementById('send-btn');
             const productListContainer = document.querySelector('.product-list');
-            const selectedProductsList = document.getElementById('selected-products-list');
             const summaryTotalElem = document.getElementById('summary-total');
-
-            const fullText = "Bienvenido a Power Labz";
-            const optionsText = "selecciona las opciones";
-            const leapText = "un pequeño gran salto";
 
             let selectedProducts = {};
             let isStoreMode = false;
-            
-            // Mapa con los costos de envío para estados específicos (rango de $290 a $430 pesos).
-            const shippingCosts = new Map([
-                ["Ciudad de México", 290],
-                ["Estado de México", 290],
-                ["Hidalgo", 290],
-                ["Puebla", 310],
-                ["Veracruz", 350],
-                ["Jalisco", 350],
-                ["Nuevo León", 400],
-                ["Chihuahua", 430],
-                ["Baja California", 430],
-                ["Coahuila", 350]
-            ]);
-            const defaultCost = 350;
+            let activeSuggestionIndex = -1; // Para navegación con teclado
 
-            // Mapeo de nombres largos a nombres cortos para el cálculo de costos.
-            const stateNameMapping = new Map([
-                ["Coahuila de Zaragoza", "Coahuila"],
-                ["Ciudad de México (CDMX)", "Ciudad de México"],
-                ["México (Estado de México)", "Estado de México"],
-                ["Veracruz de Ignacio de la Llave", "Veracruz"],
-            ]);
-
-            // Lista completa de estados de México proporcionada por el usuario
+            // Lista COMPLETA y ORDENADA de los 32 estados de México con la nueva nomenclatura
             const estadosDeMexico = [
-                "Aguascalientes", "Baja California", "Baja California Sur", "Campeche", "Chiapas", "Chihuahua", "Ciudad de México (CDMX)", "Coahuila de Zaragoza", "Colima", "Durango", "Guanajuato", "Guerrero", "Hidalgo", "Jalisco", "México (Estado de México)", "Michoacán de Ocampo", "Morelos", "Nayarit", "Nuevo León", "Oaxaca", "Puebla", "Querétaro", "Quintana Roo", "San Luis Potosí", "Sinaloa", "Sonora", "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz de Ignacio de la Llave", "Yucatán", "Zacatecas"
+                "Aguascalientes", "Baja California", "Baja California Sur", "Campeche", 
+                "Chiapas", "Chihuahua", "Ciudad de México o CDMX", "Coahuila", "Colima", 
+                "Durango", "Estado de México", "Guanajuato", "Guerrero", "Hidalgo", 
+                "Jalisco", "Michoacán", "Morelos", "Nayarit", "Nuevo León", "Oaxaca", 
+                "Puebla", "Querétaro", "Quintana Roo", "San Luis Potosí", "Sinaloa", 
+                "Sonora", "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz", 
+                "Yucatán", "Zacatecas"
             ];
             
-            // Popula el datalist con todos los estados
-            estadosDeMexico.forEach(estado => {
-                const option = document.createElement('option');
-                option.value = estado;
-                datalistEstados.appendChild(option);
+            // Re-mapeo de costos de envío usando la nueva nomenclatura de estados
+            const shippingCosts = new Map([
+                ["Aguascalientes", 350], 
+                ["Baja California", 450], 
+                ["Baja California Sur", 450], 
+                ["Campeche", 360], 
+                ["Chiapas", 360], 
+                ["Chihuahua", 430], 
+                ["Ciudad de México o CDMX", 320], 
+                ["Coahuila", 350], 
+                ["Colima", 340], 
+                ["Durango", 360], 
+                ["Estado de México", 320], 
+                ["Guanajuato", 350], 
+                ["Guerrero", 360], 
+                ["Hidalgo", 320], 
+                ["Jalisco", 340], 
+                ["Michoacán", 350], 
+                ["Morelos", 340], 
+                ["Nayarit", 350], 
+                ["Nuevo León", 400], 
+                ["Oaxaca", 360], 
+                ["Puebla", 320], 
+                ["Querétaro", 320], 
+                ["Quintana Roo", 400], 
+                ["San Luis Potosí", 350], 
+                ["Sinaloa", 430], 
+                ["Sonora", 450], 
+                ["Tabasco", 360], 
+                ["Tamaulipas", 360], 
+                ["Tlaxcala", 320], 
+                ["Veracruz", 350], 
+                ["Yucatán", 400], 
+                ["Zacatecas", 350]
+            ]);
+
+            // Función para calcular el costo de envío
+            const calculateShippingCost = (estado) => {
+                return shippingCosts.get(estado) !== undefined ? shippingCosts.get(estado) : 350; 
+            };
+
+            // Función para actualizar el estado del campo de búsqueda (habilita/deshabilita y botón de borrado)
+            const updateStateInputStatus = (isSelected) => {
+                if (isSelected) {
+                    estadoSearchInput.disabled = true;
+                    clearStateBtn.style.display = 'block';
+                    estadoSearchInput.style.backgroundColor = '#221a00'; 
+                } else {
+                    estadoSearchInput.disabled = false;
+                    clearStateBtn.style.display = 'none';
+                    estadoSearchInput.style.backgroundColor = '#111';
+                }
+            };
+
+            // Función para actualizar el resumen y el total
+            const updateSummary = () => {
+                let productsTotal = 0;
+                
+                // 1. Calcular el subtotal de productos
+                for (const id in selectedProducts) {
+                    const item = selectedProducts[id];
+                    if (item.quantity > 0) {
+                        const itemTotal = item.quantity * item.price;
+                        productsTotal += itemTotal;
+                    }
+                }
+                
+                // Actualizar Subtotal de Productos
+                subtotalAmountElem.textContent = `$${productsTotal} MXN`;
+                
+                let finalTotal = productsTotal;
+                const estado = estadoHiddenInput.value; 
+                const isStateValid = estadosDeMexico.includes(estado);
+                
+                // 2. Determinar y mostrar/sumar el costo de envío
+                if (isStateValid) {
+                    const shippingCost = calculateShippingCost(estado);
+                    
+                    // El costo de envío siempre se suma al total si hay un estado válido
+                    costoEnvioElem.textContent = `$${shippingCost} MXN`;
+                    finalTotal += shippingCost;
+                    
+                } else {
+                    // Si no hay estado válido, mostrar "--" en el costo de envío
+                    costoEnvioElem.textContent = '--';
+                }
+                
+                // 3. Actualizar el Total Final
+                summaryTotalElem.textContent = `Total: $${finalTotal} MXN`;
+            };
+            
+            // Función para manejar la selección de un estado
+            const selectState = (state) => {
+                estadoSearchInput.value = state;
+                estadoHiddenInput.value = state;
+                estadoSuggestions.style.display = 'none';
+                activeSuggestionIndex = -1;
+                updateStateInputStatus(true); // Bloquea la escritura
+                updateSummary(); // Actualiza el resumen inmediatamente
+                saveFormData();
+            };
+            
+            // Función para manejar la deselección/borrado del estado
+            const clearStateSelection = () => {
+                estadoSearchInput.value = '';
+                estadoHiddenInput.value = '';
+                updateStateInputStatus(false); // Habilita la escritura
+                estadoSearchInput.focus();
+                estadoSuggestions.style.display = 'none'; // Oculta sugerencias al borrar
+                updateSummary(); // Actualiza el resumen inmediatamente
+                saveFormData();
+            };
+            
+            // Listener para el botón de borrado
+            clearStateBtn.addEventListener('click', clearStateSelection);
+
+            // Función para poblar la lista de sugerencias (simula el dropdown)
+            const populateStateSuggestions = (filter = '', showAll = false) => {
+                estadoSuggestions.innerHTML = '';
+                const normalizedFilter = filter.toLowerCase().trim();
+                activeSuggestionIndex = -1;
+                
+                // Filtra los estados
+                const filteredStates = showAll && filter.length === 0 
+                    ? estadosDeMexico
+                    : estadosDeMexico.filter(estado => 
+                        estado.toLowerCase().includes(normalizedFilter) || estado.toLowerCase().includes(normalizedFilter.replace('cdmx', 'ciudad de méxico'))
+                    );
+
+                // Muestra la lista si hay filtro con resultados O si se pidió mostrar todo (clic/foco)
+                if (filteredStates.length > 0 && (filter.length > 0 || showAll)) {
+                    filteredStates.forEach(estado => {
+                        const suggestionItem = document.createElement('div');
+                        suggestionItem.className = 'state-suggestions-item';
+                        suggestionItem.textContent = estado;
+                        suggestionItem.dataset.value = estado;
+                        
+                        suggestionItem.addEventListener('click', () => {
+                            selectState(estado);
+                        });
+                        
+                        estadoSuggestions.appendChild(suggestionItem);
+                    });
+                    estadoSuggestions.style.display = 'block';
+                } else {
+                    estadoSuggestions.style.display = 'none';
+                }
+            };
+            
+            // Event listener para mostrar las sugerencias al hacer clic/foco
+            estadoSearchInput.addEventListener('focus', () => {
+                if (!estadoSearchInput.disabled) {
+                    populateStateSuggestions(estadoSearchInput.value, true); 
+                }
+            });
+
+            // Event listener para el campo de búsqueda (INPUT) - Filtrado
+            estadoSearchInput.addEventListener('input', (e) => {
+                const filter = e.target.value;
+                if (filter.length === 0) {
+                    estadoHiddenInput.value = '';
+                    updateSummary();
+                }
+                if (!estadoSearchInput.disabled) {
+                    populateStateSuggestions(filter); 
+                }
+            });
+            
+            // Ocultar sugerencias cuando se pierde el foco (click fuera)
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.state-search-wrapper')) {
+                    estadoSuggestions.style.display = 'none';
+                }
+            });
+
+            // Manejo de teclado para navegación (flechas y Enter)
+            estadoSearchInput.addEventListener('keydown', (e) => {
+                const items = estadoSuggestions.querySelectorAll('.state-suggestions-item');
+                if (items.length === 0) return;
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    activeSuggestionIndex = (activeSuggestionIndex + 1) % items.length;
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    activeSuggestionIndex = (activeSuggestionIndex - 1 + items.length) % items.length;
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (activeSuggestionIndex > -1) {
+                        items[activeSuggestionIndex].click();
+                    } else if (estadosDeMexico.includes(estadoSearchInput.value.trim())) {
+                        selectState(estadoSearchInput.value.trim());
+                    }
+                    return;
+                }
+
+                items.forEach((item, index) => {
+                    item.classList.remove('active-suggestion');
+                    if (index === activeSuggestionIndex) {
+                        item.classList.add('active-suggestion');
+                        item.scrollIntoView({ block: 'nearest' });
+                    }
+                });
             });
 
             const scramble = (text) => {
@@ -488,15 +812,15 @@
             };
 
             const startDecryptionSequence = async () => {
-                await decrypt(cipherTextElem, fullText, 1000, 500);
+                await decrypt(cipherTextElem, "Bienvenido a Power Labz", 1000, 500);
                 
                 setTimeout(() => {
-                    optionsTextElem.textContent = optionsText;
+                    optionsTextElem.textContent = "selecciona las opciones";
                     optionsTextElem.style.opacity = '1';
                 }, 1000);
 
                 setTimeout(() => {
-                    leapTextElem.textContent = leapText;
+                    leapTextElem.textContent = "un pequeño gran salto";
                     leapTextElem.style.opacity = '1';
                 }, 1700);
 
@@ -515,11 +839,15 @@
                 if (isPatrocinio) {
                     formTitle.textContent = "Formulario de Patrocinio";
                     isStoreMode = false;
-                    resetProductSelection();
+                    // *** CAMBIO AQUÍ: Título para Patrocinio ***
+                    productsTitle.textContent = "Apoya la marca comprando un producto (Opcional)"; 
                 } else {
                     formTitle.textContent = "Formulario de Envío y Productos";
                     isStoreMode = true;
+                    // Título para Tienda
+                    productsTitle.textContent = "Nuestros Productos"; 
                 }
+                updateSummary();
             };
             
             patrocinioBtn.addEventListener('click', () => {
@@ -532,16 +860,8 @@
 
             backPatrocinioBtn.addEventListener('click', () => {
                 transitionToSection(mainContainer);
-                shippingCostContainer.classList.add('hidden');
-                costoEnvioElem.textContent = '--';
             });
             
-            const calculateShippingCost = (estado) => {
-                const mappedEstado = stateNameMapping.get(estado) || estado;
-                const cost = shippingCosts.get(mappedEstado) || defaultCost;
-                return cost;
-            };
-
             const saveFormData = () => {
                 const formData = {
                     nombre: document.getElementById('nombre').value,
@@ -550,7 +870,8 @@
                     direccion: document.getElementById('direccion').value,
                     colonia: document.getElementById('colonia').value,
                     ciudad: document.getElementById('ciudad').value,
-                    estado: document.getElementById('estado').value,
+                    // Guarda el valor del input oculto (estado seleccionado)
+                    estado: estadoHiddenInput.value, 
                     cp: document.getElementById('cp').value,
                     referencia: document.getElementById('referencia').value,
                 };
@@ -567,154 +888,30 @@
                     document.getElementById('direccion').value = formData.direccion || '';
                     document.getElementById('colonia').value = formData.colonia || '';
                     document.getElementById('ciudad').value = formData.ciudad || '';
-                    document.getElementById('estado').value = formData.estado || '';
                     document.getElementById('cp').value = formData.cp || '';
                     document.getElementById('referencia').value = formData.referencia || '';
 
-                    if (formData.estado) {
-                         const shippingCost = calculateShippingCost(formData.estado);
-                         const costText = `$${shippingCost} MXN`;
-                         shippingCostContainer.classList.remove('hidden');
-                         costoEnvioElem.textContent = costText;
+                    // Carga el valor guardado en el input de búsqueda y en el input oculto
+                    if (formData.estado && estadosDeMexico.includes(formData.estado)) {
+                        estadoHiddenInput.value = formData.estado;
+                        estadoSearchInput.value = formData.estado;
+                        updateStateInputStatus(true); // Bloquea la escritura
                     }
                 }
             };
 
-            estadoInput.addEventListener('input', async (e) => {
-                updateSummary();
+            const formInputs = patrocinioForm.querySelectorAll('input, textarea');
+            formInputs.forEach(input => {
+                input.addEventListener('input', saveFormData);
             });
 
-            patrocinioForm.addEventListener('input', saveFormData);
-
-            // Se cambia el evento de submit del formulario a un evento de clic en el botón
-            // para evitar el comportamiento por defecto de submit del formulario
-            sendBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                // Validar que todos los campos requeridos estén llenos
-                if (!patrocinioForm.reportValidity()) {
-                    return;
-                }
-                
-                // Validación específica para la tienda: debe haber al menos un producto seleccionado
-                if (isStoreMode && Object.keys(selectedProducts).length === 0) {
-                     // Using a custom alert since window.alert() is not allowed.
-                     alert("Por favor, selecciona al menos un producto.");
-                     return;
-                }
-
-                const selectedState = estadoInput.value;
-                const isBuyingProducts = Object.keys(selectedProducts).length > 0;
-                
-                if (isBuyingProducts && !estadosDeMexico.includes(selectedState)) {
-                    // Using a custom alert since window.alert() is not allowed.
-                    alert("Por favor, selecciona un estado válido de la lista para calcular el envío.");
-                    return;
-                }
-                
-                let message = "Hola, me gustaría realizar un pedido con la siguiente información:\n\n";
-                
-                if (isStoreMode) {
-                    message += "--- Pedido de productos ---\n";
-                } else {
-                    message += "--- Solicitud de patrocinio ---\n";
-                }
-                
-                if (isBuyingProducts) {
-                    message += "Productos:\n";
-                    let totalProductos = 0;
-                    for (const id in selectedProducts) {
-                        const item = selectedProducts[id];
-                        message += `* ${item.quantity}x ${item.name} ($${item.price} c/u)\n`;
-                        totalProductos += item.quantity * item.price;
-                    }
-                    message += `Total de productos: $${totalProductos} MXN\n\n`;
-
-                    const shippingCost = calculateShippingCost(selectedState);
-                    const totalPagar = totalProductos + shippingCost;
-                    message += `Costo de Envío: $${shippingCost} MXN\n\n`;
-                    message += `TOTAL A PAGAR: $${totalPagar} MXN\n\n`;
-                } else {
-                    message += "Productos:\nSin productos seleccionados\n\n";
-                    // Asegúrate de que el costo de envío se muestre y se sume incluso sin productos
-                    if (estadosDeMexico.includes(selectedState)) {
-                        const shippingCost = calculateShippingCost(selectedState);
-                        message += `Costo de Envío: $${shippingCost} MXN\n\n`;
-                        message += `TOTAL A PAGAR: $${shippingCost} MXN\n\n`;
-                    }
-                }
-
-                message += "--- Información de Contacto y Envío ---\n";
-                message += `Nombre: ${document.getElementById('nombre').value}\n`;
-                message += `Celular: ${document.getElementById('celular').value}\n`;
-                message += `Email: ${document.getElementById('email').value}\n`;
-                message += `Dirección: ${document.getElementById('direccion').value}, Colonia: ${document.getElementById('colonia').value}\n`;
-                message += `Ciudad: ${document.getElementById('ciudad').value}, Estado: ${document.getElementById('estado').value}, C.P.: ${document.getElementById('cp').value}\n`;
-                message += `Referencia: ${document.getElementById('referencia').value}\n`;
-                
-                const phoneNumber = '5572365913';
-                const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-                
-                window.open(whatsappUrl, '_blank');
-                patrocinioForm.reset();
-                selectedProducts = {};
-                updateSummary();
-                shippingCostContainer.classList.add('hidden');
-                costoEnvioElem.textContent = '--';
-                transitionToSection(mainContainer);
-                localStorage.removeItem('patrocinioFormData');
-            });
-
+            // Manejo de productos
             const resetProductSelection = () => {
-                selectedProducts = {};
-                document.querySelectorAll('.product-item').forEach(item => {
-                    item.classList.remove('selected');
-                    item.querySelector('.quantity-display').textContent = 0;
-                });
+                // Función de reseteo mantenida, aunque ya no se llama al cambiar de modo
+                // para mantener la selección si el usuario la hizo en Patrocinio.
                 updateSummary();
             };
 
-            const updateSummary = () => {
-                selectedProductsList.innerHTML = '';
-                let productsTotal = 0;
-                
-                // Muestra la lista de productos seleccionados y calcula el subtotal de productos
-                for (const id in selectedProducts) {
-                    const item = selectedProducts[id];
-                    if (item.quantity > 0) {
-                        const itemTotal = item.quantity * item.price;
-                        productsTotal += itemTotal;
-
-                        const summaryItem = document.createElement('div');
-                        summaryItem.className = 'summary-item';
-                        summaryItem.innerHTML = `
-                            <span>${item.name} (${item.quantity})</span>
-                            <span>$${itemTotal} MXN</span>
-                        `;
-                        selectedProductsList.appendChild(summaryItem);
-                    }
-                }
-                
-                let finalTotal = productsTotal;
-                const estado = estadoInput.value;
-                const isStateValid = estadosDeMexico.includes(estado);
-
-                // Muestra el costo de envío si el estado es válido
-                if (isStateValid) {
-                    const shippingCost = calculateShippingCost(estado);
-                    shippingCostContainer.classList.remove('hidden');
-                    costoEnvioElem.textContent = `$${shippingCost} MXN`;
-                    
-                    // Suma el costo de envío al total, sin importar si hay productos
-                    finalTotal += shippingCost;
-                } else {
-                    shippingCostContainer.classList.add('hidden');
-                }
-                
-                summaryTotalElem.textContent = `Total: $${finalTotal} MXN`;
-            };
-            
-            // Event listener for quantity buttons
             productListContainer.addEventListener('click', (e) => {
                 const productItem = e.target.closest('.product-item');
                 if (!productItem) return;
@@ -723,39 +920,118 @@
                 const productName = productItem.dataset.name;
                 const productPrice = parseInt(productItem.dataset.price);
                 const quantityDisplay = productItem.querySelector('.quantity-display');
+                let currentQuantity = parseInt(quantityDisplay.textContent);
 
-                if (e.target.closest('.plus-btn')) {
-                    let quantity = (selectedProducts[productId]?.quantity || 0) + 1;
-                    quantityDisplay.textContent = quantity;
+                if (e.target.classList.contains('plus-btn')) {
+                    currentQuantity++;
+                    quantityDisplay.textContent = currentQuantity;
                     productItem.classList.add('selected');
+                } else if (e.target.classList.contains('minus-btn')) {
+                    if (currentQuantity > 0) {
+                        currentQuantity--;
+                        quantityDisplay.textContent = currentQuantity;
+                        if (currentQuantity === 0) {
+                            productItem.classList.remove('selected');
+                        }
+                    }
+                }
 
+                if (currentQuantity > 0) {
                     selectedProducts[productId] = {
                         name: productName,
                         price: productPrice,
-                        quantity: quantity
+                        quantity: currentQuantity
                     };
-                    updateSummary();
-
-                } else if (e.target.closest('.minus-btn')) {
-                    let quantity = (selectedProducts[productId]?.quantity || 0);
-                    if (quantity > 0) {
-                        quantity--;
-                        quantityDisplay.textContent = quantity;
-                        
-                        if (quantity === 0) {
-                            productItem.classList.remove('selected');
-                            delete selectedProducts[productId];
-                        } else {
-                            selectedProducts[productId].quantity = quantity;
-                        }
-                        updateSummary();
-                    }
+                } else {
+                    delete selectedProducts[productId];
                 }
+
+                updateSummary();
+                saveFormData();
             });
-            
-            // Start the initial animation and load data
+
+            // Envío del formulario
+            sendBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Validaciones básicas
+                if (!patrocinioForm.checkValidity()) {
+                    alert('Por favor completa todos los campos obligatorios.');
+                    return;
+                }
+                
+                if (!estadoHiddenInput.value) {
+                    alert('Por favor selecciona un estado válido de la lista.');
+                    estadoSearchInput.focus();
+                    return;
+                }
+                
+                // VALIDACIÓN CORREGIDA: Verificar si hay productos seleccionados SOLO en modo tienda
+                if (isStoreMode && Object.keys(selectedProducts).length === 0) {
+                    alert('Por favor selecciona al menos un producto para continuar con la compra.');
+                    return;
+                }
+                
+                // Obtener datos y costos
+                const estado = estadoHiddenInput.value;
+                const shippingCost = calculateShippingCost(estado);
+                let productsTotal = 0;
+                
+                // Construir mensaje para WhatsApp
+                let message = `Hola, me interesa ${isStoreMode ? 'comprar productos' : 'el patrocinio'}.\n\n`;
+                message += `*Datos de contacto:*\n`;
+                message += `Nombre: ${document.getElementById('nombre').value}\n`;
+                message += `Celular: ${document.getElementById('celular').value}\n`;
+                message += `Email: ${document.getElementById('email').value}\n\n`;
+                
+                message += `*Dirección de envío:*\n`;
+                message += `Dirección: ${document.getElementById('direccion').value}\n`;
+                message += `Colonia: ${document.getElementById('colonia').value}\n`;
+                message += `Ciudad: ${document.getElementById('ciudad').value}\n`;
+                message += `Estado: ${estado}\n`;
+                message += `Código Postal: ${document.getElementById('cp').value}\n`;
+                message += `Referencia: ${document.getElementById('referencia').value}\n\n`;
+                
+                message += `*Resumen de pago:*\n`;
+
+                if (Object.keys(selectedProducts).length > 0) {
+                    message += `*Productos seleccionados:*\n`;
+                    for (const id in selectedProducts) {
+                        const item = selectedProducts[id];
+                        const itemTotal = item.quantity * item.price;
+                        productsTotal += itemTotal;
+                        message += `- ${item.name} x${item.quantity}: $${itemTotal} MXN\n`;
+                    }
+                    message += `\n`; // Espacio después de la lista de productos
+                    
+                    const finalTotal = productsTotal + shippingCost;
+                    
+                    message += `Subtotal: $${productsTotal} MXN\n`;
+                    message += `Envío: $${shippingCost} MXN\n`;
+                    message += `*Total: $${finalTotal} MXN*\n\n`;
+                } else {
+                    // Si no hay productos, el subtotal es 0, y el total es solo el envío.
+                    const finalTotal = shippingCost;
+                    message += `Subtotal de Productos: $0 MXN\n`;
+                    message += `Envío: $${shippingCost} MXN\n`;
+                    message += `*Total (solo envío): $${finalTotal} MXN*\n\n`;
+                }
+                
+                message += `¡Gracias!`;
+                
+                // Codificar el mensaje para URL
+                const encodedMessage = encodeURIComponent(message);
+                // NOTA: Reemplazar '525512345678' con el número real de WhatsApp.
+                const whatsappURL = `https://wa.me/5572365913?text=${encodedMessage}`;
+                
+                // Abrir WhatsApp
+                window.open(whatsappURL, '_blank');
+            });
+
+            // Inicialización
             startDecryptionSequence();
             loadFormData();
+            updateSummary();
         });
     </script>
 </body>
