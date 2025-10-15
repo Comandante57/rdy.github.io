@@ -113,6 +113,12 @@
             font-weight: 500; 
         }
         
+        /* Estilo para los campos requeridos no validados */
+        .form-input:invalid:not(:placeholder-shown),
+        .form-select:invalid:not(:placeholder-shown) {
+            border-color: #dc2626; /* Rojo oscuro */
+        }
+
         .state-search-wrapper {
             position: relative;
             margin-bottom: 1rem;
@@ -338,12 +344,13 @@
         <span id="options-text" class="options-text"></span>
         <span id="leap-text" class="leap-text"></span>
         <div id="buttons-container" class="buttons-container hidden">
-            <button class="btn" id="patrocinio-btn" type="button">Patrocinio</button>
-            <button class="btn" id="tienda-btn" type="button">Comprar productos</button>
+            <!-- Solo se conserva el botón de Patrocinio -->
+            <button class="btn" id="patrocinio-btn" type="button">Recibir Patrocinio</button>
+            <!-- Botón de Compras (tienda-btn) ELIMINADO -->
         </div>
     </div>
 
-    <!-- Patrocinio & Tienda Form Combined -->
+    <!-- Patrocinio Form -->
     <div id="patrocinio-container" class="form-container">
         <h2 id="form-title" class="text-2xl font-bold mb-4">Formulario de Patrocinio</h2>
         <form id="patrocinio-form">
@@ -351,7 +358,7 @@
             <input type="text" id="nombre" name="nombre" class="form-input" required placeholder="Tu nombre completo">
 
             <label for="celular" class="form-label">Número de celular:</label>
-            <input type="tel" id="celular" name="celular" class="form-input" required placeholder="Ej. 55 1234 5678">
+            <input type="tel" id="celular" name="celular" class="form-input" required placeholder="Ej. 55 1234 5678" pattern="[0-9\s]{10,14}">
 
             <label for="email" class="form-label">Correo electrónico:</label>
             <input type="email" id="email" name="email" class="form-input" required placeholder="tu-correo@ejemplo.com">
@@ -382,20 +389,21 @@
                 </div>
                 
                 <!-- Input oculto para almacenar el valor final del estado (para validación/envío) -->
+                <!-- Este input es crucial para la validación del formulario -->
                 <input type="hidden" id="estado-hidden" name="estado" required>
             </div>
 
             <label for="cp" class="form-label">Código Postal:</label>
-            <input type="text" id="cp" name="cp" class="form-input" required placeholder="Ej. 12345">
+            <input type="text" id="cp" name="cp" class="form-input" required placeholder="Ej. 12345" pattern="[0-9]{5}">
 
             <label for="referencia" class="form-label">Referencia:</label>
             <textarea id="referencia" name="referencia" class="form-input" rows="3" required placeholder="Referencia para la entrega"></textarea>
 
-            <!-- Products section moved inside the form -->
+            <!-- Products section - Opcional para patrocinio -->
             <div id="products-section">
-                <!-- Se cambió el título para que sea dinámico, pero aquí ponemos el ID para JS -->
-                <h3 class="product-section-title" id="products-title"></h3> 
+                <h3 class="product-section-title" id="products-title">Apoya la marca comprando un producto (Opcional)</h3> 
                 <div class="product-list">
+                    <!-- Los productos se mantienen para el patrocinio, ya que son opcionales -->
                     <div class="product-item" data-product-id="1" data-price="450" data-name="Whey Protein 17 oz">
                         <div class="product-info">
                             <div class="product-icon">💪</div>
@@ -522,7 +530,7 @@
             <!-- Buttons moved to the bottom and styled as a row -->
             <div class="flex flex-col sm:flex-row justify-center items-center mt-4 space-y-2 sm:space-y-0 sm:space-x-2">
                 <button class="btn" id="back-patrocinio-btn" type="button">Regresar</button>
-                <button class="btn bg-green-600 hover:bg-green-700 border-green-600 hover:border-green-700" id="send-btn">
+                <button class="btn bg-green-600 hover:bg-green-700 border-green-600 hover:border-green-700" id="send-btn" type="submit">
                     Enviar a WhatsApp
                 </button>
             </div>
@@ -539,14 +547,12 @@
             const buttonsContainer = document.getElementById('buttons-container');
             
             const patrocinioBtn = document.getElementById('patrocinio-btn');
-            const tiendaBtn = document.getElementById('tienda-btn');
             const patrocinioContainer = document.getElementById('patrocinio-container');
             const formTitle = document.getElementById('form-title');
-            const productsTitle = document.getElementById('products-title'); // Nuevo elemento
+            const productsTitle = document.getElementById('products-title');
             const patrocinioForm = document.getElementById('patrocinio-form');
             const costoEnvioElem = document.getElementById('costo-envio');
             const subtotalAmountElem = document.getElementById('subtotal-amount'); 
-            const shippingCostItem = document.getElementById('shipping-cost-item');
             
             // Elementos de búsqueda de estado actualizados
             const estadoSearchInput = document.getElementById('estado-search');
@@ -560,7 +566,7 @@
             const summaryTotalElem = document.getElementById('summary-total');
 
             let selectedProducts = {};
-            let isStoreMode = false;
+            // isStoreMode se elimina ya que siempre es modo patrocinio/envío
             let activeSuggestionIndex = -1; // Para navegación con teclado
 
             // Lista COMPLETA y ORDENADA de los 32 estados de México con la nueva nomenclatura
@@ -612,6 +618,7 @@
 
             // Función para calcular el costo de envío
             const calculateShippingCost = (estado) => {
+                // Si el estado no está en el mapa, el costo por defecto es 350 (o el que decidas)
                 return shippingCosts.get(estado) !== undefined ? shippingCosts.get(estado) : 350; 
             };
 
@@ -734,7 +741,8 @@
             estadoSearchInput.addEventListener('input', (e) => {
                 const filter = e.target.value;
                 if (filter.length === 0) {
-                    estadoHiddenInput.value = '';
+                    // Si se borra el texto, también se borra el valor del input oculto
+                    estadoHiddenInput.value = ''; 
                     updateSummary();
                 }
                 if (!estadoSearchInput.disabled) {
@@ -811,6 +819,20 @@
                 });
             };
 
+            const transitionToSection = (targetSection) => {
+                const currentActive = document.querySelector('.active-section');
+                if (currentActive) {
+                    currentActive.classList.remove('active-section');
+                }
+                targetSection.classList.add('active-section');
+                
+                if (targetSection === patrocinioContainer) {
+                    formTitle.textContent = "Formulario de Patrocinio";
+                }
+                // isStoreMode ya no es necesaria
+                updateSummary();
+            };
+
             const startDecryptionSequence = async () => {
                 await decrypt(cipherTextElem, "Bienvenido a Power Labz", 1000, 500);
                 
@@ -829,35 +851,11 @@
                 }, 2400);
             };
 
-            const transitionToSection = (targetSection, isPatrocinio) => {
-                const currentActive = document.querySelector('.active-section');
-                if (currentActive) {
-                    currentActive.classList.remove('active-section');
-                }
-                targetSection.classList.add('active-section');
-
-                if (isPatrocinio) {
-                    formTitle.textContent = "Formulario de Patrocinio";
-                    isStoreMode = false;
-                    // *** CAMBIO AQUÍ: Título para Patrocinio ***
-                    productsTitle.textContent = "Apoya la marca comprando un producto (Opcional)"; 
-                } else {
-                    formTitle.textContent = "Formulario de Envío y Productos";
-                    isStoreMode = true;
-                    // Título para Tienda
-                    productsTitle.textContent = "Nuestros Productos"; 
-                }
-                updateSummary();
-            };
-            
+            // ** ÚNICA FUNCIÓN DE TRANSICIÓN **
             patrocinioBtn.addEventListener('click', () => {
-                transitionToSection(patrocinioContainer, true);
+                transitionToSection(patrocinioContainer);
             });
-
-            tiendaBtn.addEventListener('click', () => {
-                transitionToSection(patrocinioContainer, false);
-            });
-
+            
             backPatrocinioBtn.addEventListener('click', () => {
                 transitionToSection(mainContainer);
             });
@@ -906,12 +904,6 @@
             });
 
             // Manejo de productos
-            const resetProductSelection = () => {
-                // Función de reseteo mantenida, aunque ya no se llama al cambiar de modo
-                // para mantener la selección si el usuario la hizo en Patrocinio.
-                updateSummary();
-            };
-
             productListContainer.addEventListener('click', (e) => {
                 const productItem = e.target.closest('.product-item');
                 if (!productItem) return;
@@ -951,26 +943,29 @@
             });
 
             // Envío del formulario
-            sendBtn.addEventListener('click', (e) => {
-                e.preventDefault();
+            // Cambiado de 'click' a 'submit' y se elimina el e.preventDefault()
+            // para permitir la validación nativa del navegador (el "te marque que no se lleno algo")
+            patrocinioForm.addEventListener('submit', (e) => {
                 
-                // Validaciones básicas
+                // Si la validación nativa falla, se detiene aquí y se muestran los mensajes de error
                 if (!patrocinioForm.checkValidity()) {
-                    alert('Por favor completa todos los campos obligatorios.');
+                    // Si el formulario es inválido, no hacemos nada.
                     return;
                 }
                 
-                if (!estadoHiddenInput.value) {
-                    alert('Por favor selecciona un estado válido de la lista.');
-                    estadoSearchInput.focus();
+                // Validación específica para el campo oculto del estado
+                if (!estadoHiddenInput.value || !estadosDeMexico.includes(estadoHiddenInput.value)) {
+                    e.preventDefault(); // Detener el envío si el estado es inválido
+                    // Usamos el setCustomValidity para forzar el mensaje de error del navegador en el input visible
+                    estadoSearchInput.setCustomValidity('Por favor, selecciona un estado válido de la lista.');
+                    estadoSearchInput.reportValidity(); // Muestra el mensaje de error
                     return;
+                } else {
+                    // Resetear el mensaje de error si es válido para que el formulario pueda enviarse
+                    estadoSearchInput.setCustomValidity('');
                 }
-                
-                // VALIDACIÓN CORREGIDA: Verificar si hay productos seleccionados SOLO en modo tienda
-                if (isStoreMode && Object.keys(selectedProducts).length === 0) {
-                    alert('Por favor selecciona al menos un producto para continuar con la compra.');
-                    return;
-                }
+
+                e.preventDefault(); // Detenemos el submit una vez que las validaciones pasaron para enviar a WhatsApp
                 
                 // Obtener datos y costos
                 const estado = estadoHiddenInput.value;
@@ -978,7 +973,7 @@
                 let productsTotal = 0;
                 
                 // Construir mensaje para WhatsApp
-                let message = `Hola, me interesa ${isStoreMode ? 'comprar productos' : 'el patrocinio'}.\n\n`;
+                let message = `Hola, me interesa el patrocinio.\n\n`; // Siempre es patrocinio
                 message += `*Datos de contacto:*\n`;
                 message += `Nombre: ${document.getElementById('nombre').value}\n`;
                 message += `Celular: ${document.getElementById('celular').value}\n`;
@@ -992,7 +987,7 @@
                 message += `Código Postal: ${document.getElementById('cp').value}\n`;
                 message += `Referencia: ${document.getElementById('referencia').value}\n\n`;
                 
-                message += `*Resumen de pago:*\n`;
+                message += `*Resumen de pago (Compra Opcional):*\n`;
 
                 if (Object.keys(selectedProducts).length > 0) {
                     message += `*Productos seleccionados:*\n`;
@@ -1002,26 +997,25 @@
                         productsTotal += itemTotal;
                         message += `- ${item.name} x${item.quantity}: $${itemTotal} MXN\n`;
                     }
-                    message += `\n`; // Espacio después de la lista de productos
+                    message += `\n`; 
                     
                     const finalTotal = productsTotal + shippingCost;
                     
-                    message += `Subtotal: $${productsTotal} MXN\n`;
-                    message += `Envío: $${shippingCost} MXN\n`;
+                    message += `Subtotal de Productos: $${productsTotal} MXN\n`;
+                    message += `Costo de Envío: $${shippingCost} MXN\n`;
                     message += `*Total: $${finalTotal} MXN*\n\n`;
                 } else {
-                    // Si no hay productos, el subtotal es 0, y el total es solo el envío.
+                    // Si no hay productos, el subtotal es 0, y el total es solo el envío (si hay estado)
                     const finalTotal = shippingCost;
                     message += `Subtotal de Productos: $0 MXN\n`;
-                    message += `Envío: $${shippingCost} MXN\n`;
-                    message += `*Total (solo envío): $${finalTotal} MXN*\n\n`;
+                    message += `Costo de Envío: $${shippingCost} MXN\n`;
+                    message += `*Total: $${finalTotal} MXN*\n\n`;
                 }
                 
                 message += `¡Gracias!`;
                 
                 // Codificar el mensaje para URL
                 const encodedMessage = encodeURIComponent(message);
-                // NOTA: Reemplazar '525512345678' con el número real de WhatsApp.
                 const whatsappURL = `https://wa.me/5572365913?text=${encodedMessage}`;
                 
                 // Abrir WhatsApp
